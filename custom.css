@@ -65,35 +65,77 @@ body {
   text-align: center;
 }
 
-/* ===== رأس الصفحة (نسخة صحفية أنيقة) ===== */
-
+/* رأس الصفحة */
 .site-header {
-  background-color: #000080;
-  padding: 12px 25px;   /* شريط أنحف */
-  border-bottom: 2px solid #FBB917;
+    background-color: #1f2f45; /* اللون الكحلي الأفتح */
+    padding: 12px 25px;
+    border-bottom: 2px solid #8b6b4a; /* إطار ذهبي */
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* لتوزيع العناصر */
+    position: relative;
 }
 
+/* الشعار + اسم الصحيفة */
 .logo {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start; /* RTL: من اليمين */
-  direction: rtl;
-  gap: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    direction: rtl;
 }
 
 .site-logo {
-  width: 72px;          /* أصغر وأكثر رقيًا */
-  height: auto;
+    width: 48px;
+    height: auto;
 }
 
-.logo-text h1 {
-  margin: 0;
-  font-size: 36px;
-  color: #ffffff;
-  line-height: 1.1;
+.site-name {
+    font-size: 28px;
+    color: #ffffff;
+    margin: 0;
 }
 
-.logo-text span {
-  font-size: 16px;
-  color: #d6c4a3;
+/* العبارة في منتصف الشريط */
+.header-tagline {
+ .header-tagline {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    font-weight: 600;
+    color: #d4b483;
+    letter-spacing: 0.5px;
 }
+
+header,
+footer {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* فوتر شريطين */
+footer {
+    font-family: "Cairo", sans-serif;
+}
+
+.footer-top {
+    background-color: #1f2f45; /* نفس لون رأس الصفحة */
+    color: #fff;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 16px;
+}
+
+.footer-top a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.footer-bottom {
+    background-color: #1f2f45;
+    color: #d6c4a3; /* ذهبي هادئ */
+    text-align: center;
+    padding: 6px 0;
+    font-size: 14px;
+    border-top: 1px solid #8b6b4a;
+}
+
