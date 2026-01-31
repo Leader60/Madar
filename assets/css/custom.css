@@ -4,15 +4,15 @@
 
 body {
   background-color: #f7f6f3;
-  font-family: "Cairo", sans-serif;
+  font-family: "Amiri", Cairo, sans-serif;
   color: #111;
 }
 
 /* رأس الصفحة */
 .site-header {
-  background-color: #000080; /* كحلي */
+  background-color: #0b1c2d; /* كحلي */
   padding: 25px;
-  border-bottom: 2px solid #FBB917; /* ذهبي نحاسي */
+  border-bottom: 2px solid #8b6b4a; /* ذهبي نحاسي */
 }
 
 .site-header h1 {
@@ -28,7 +28,7 @@ body {
 
 /* شريط الأخبار */
 .breaking-news {
-  background-color: #FBB917;
+  background-color: #8b6b4a;
   color: #fff;
   padding: 8px 15px;
 }
@@ -60,7 +60,7 @@ body {
 }
 
 .video-frame {
-  border: 2px solid #FBB917;
+  border: 2px solid #8b6b4a;
   padding: 40px;
   text-align: center;
 }
