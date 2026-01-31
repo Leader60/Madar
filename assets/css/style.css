@@ -6,7 +6,7 @@ body {
 }
 
 header {
-  background-color: #153E7E;
+  background-color: #1F2F45;
   padding: 20px;
 }
 
@@ -74,7 +74,7 @@ main {
 }
 
 .video-frame {
-  border: 2px solid #8b6b4a;
+  border: 2px solid #1F2F45;
   padding: 40px;
   text-align: center;
   background-color: #000;
