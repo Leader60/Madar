@@ -139,3 +139,37 @@ footer {
     border-top: 1px solid #8b6b4a;
 }
 
+.site-header {
+    background-color: #0f1e2e; /* كحلي أفتح قليلًا */
+    padding: 12px 20px;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-area img {
+    width: 42px;
+    height: auto;
+}
+
+.logo-area h1 {
+    margin: 0;
+    font-size: 26px;
+    color: #ffffff;
+}
+
+.site-tagline {
+    font-size: 20px;
+    font-weight: 600;
+    color: #c2a46d; /* نفس لون شريط الأخبار العاجلة */
+    text-align: center;
+}
