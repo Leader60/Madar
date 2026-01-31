@@ -35,3 +35,48 @@ main {
   max-width: 900px;
   margin: auto;
 }
+.breaking-news {
+  background-color: #8b6b4a;
+  color: #ffffff;
+  padding: 8px 15px;
+  font-size: 14px;
+}
+
+.breaking-news .label {
+  font-weight: bold;
+  margin-left: 10px;
+}
+.home-layout {
+  display: flex;
+  gap: 30px;
+}
+
+.main-content {
+  flex: 3;
+}
+
+.sidebar {
+  flex: 1;
+  background: #ffffff;
+  padding: 15px;
+  border: 1px solid #ddd;
+}
+
+.ai-box {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #8b6b4a;
+  background-color: #fdfbf8;
+}
+.video-section {
+  max-width: 900px;
+  margin: 40px auto;
+}
+
+.video-frame {
+  border: 2px solid #8b6b4a;
+  padding: 40px;
+  text-align: center;
+  background-color: #000;
+  color: #fff;
+}
