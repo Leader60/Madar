@@ -1,220 +1,17 @@
-/* =========================
-   هوية صحيفة مدار
-========================= */
-
-body {
-  background-color: #f7f6f3;
-  font-family: "Amiri", Cairo, sans-serif;
-  color: #111;
-}
-
-/* رأس الصفحة */
-.site-header {
-  background-color: #0b1c2d; /* كحلي */
-  padding: 25px;
-  border-bottom: 2px solid #8b6b4a; /* ذهبي نحاسي */
-}
-
-.site-header h1 {
-  margin: 0;
-  color: #fff;
-  font-size: 36px;
-}
-
-.site-header span {
-  color: #d6c4a3;
-  font-size: 14px;
-}
-
-/* شريط الأخبار */
-.breaking-news {
-  background-color: #8b6b4a;
-  color: #fff;
-  padding: 8px 15px;
-}
-
-/* الصفحة الرئيسية */
-.home-layout {
-  display: flex;
-  gap: 30px;
-  max-width: 1200px;
-  margin: 40px auto;
-}
-
-.main-content article {
-  background: #fff;
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
-.sidebar {
-  width: 300px;
-  background: #fff;
-  padding: 20px;
-}
-
-/* الفيديو */
-.video-section {
-  max-width: 1000px;
-  margin: 60px auto;
-}
-
-.video-frame {
-  border: 2px solid #8b6b4a;
-  padding: 40px;
-  text-align: center;
-}
-
-/* رأس الصفحة */
-.site-header {
-    background-color: #1f2f45; /* اللون الكحلي الأفتح */
-    padding: 12px 25px;
-    border-bottom: 2px solid #8b6b4a; /* إطار ذهبي */
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* لتوزيع العناصر */
-    position: relative;
-}
-
-/* الشعار + اسم الصحيفة */
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    direction: rtl;
-}
-
-.site-logo {
-    width: 48px;
-    height: auto;
-}
-
-.site-name {
-    font-size: 28px;
-    color: #ffffff;
-    margin: 0;
-}
-
-/* العبارة في منتصف الشريط */
-.header-tagline {
- .header-tagline {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 20px;
-    font-weight: 600;
-    color: #d4b483;
-    letter-spacing: 0.5px;
-}
-
-header,
-footer {
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-}
-
-.author-box {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px solid #ddd;
-}
-
-.author-avatar {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #8b6b4a; /* ذهبي نحاسي */
-}
-
-.author-info h3 {
-  margin: 0 0 5px 0;
-  color: #0b1c2d;
-}
-
-.author-info p {
-  margin: 0;
-  font-size: 14px;
-  color: #555;
-  line-height: 1.6;
-}
-   
-/* فوتر شريطين */
-footer {
-    font-family: "Cairo", sans-serif;
-}
-
-.footer-top {
-    background-color: #1f2f45; /* نفس لون رأس الصفحة */
-    color: #fff;
-    text-align: center;
-    padding: 8px 0;
-    font-size: 16px;
-}
-
-.footer-top a {
-    color: #ffffff;
-    text-decoration: none;
-}
-
-.footer-bottom {
-    background-color: #1f2f45;
-    color: #d6c4a3; /* ذهبي هادئ */
-    text-align: center;
-    padding: 6px 0;
-    font-size: 14px;
-    border-top: 1px solid #8b6b4a;
-}
-
-.site-header {
-    background-color: #0f1e2e; /* كحلي أفتح قليلًا */
-    padding: 12px 20px;
-}
-
-.header-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.logo-area {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.logo-area img {
-    width: 42px;
-    height: auto;
-}
-
-.logo-area h1 {
-    margin: 0;
-    font-size: 26px;
-    color: #ffffff;
-}
-
-.site-tagline {
-    font-size: 20px;
-    font-weight: 600;
-    color: #c2a46d; /* نفس لون شريط الأخبار العاجلة */
-    text-align: center;
-}
-
-/* صفحة المقال */
+/* ======== صفحة المقال ======== */
 .article-page {
-    background: #f7f7f7;
+    background: #f7f7f7; /* خلفية هادئة */
     padding: 40px 15px;
+    font-family: 'Arial', sans-serif;
 }
 
+/* الحاوية الأساسية */
 .article-container {
     max-width: 820px;
     margin: auto;
     background: #ffffff;
     padding: 40px;
-    border-radius: 6px;
+    border-radius: 8px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.05);
 }
 
@@ -222,28 +19,31 @@ footer {
 .article-title {
     font-size: 32px;
     line-height: 1.4;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    color: #0a1a33; /* كحلي داكن للعنوان */
 }
 
 /* معلومات المقال */
 .article-meta {
-    color: #777;
+    color: #555;
     font-size: 14px;
     margin-bottom: 30px;
 }
 
-/* النص */
+/* نص المقال */
 .article-content p {
     font-size: 18px;
     line-height: 1.9;
     margin-bottom: 20px;
 }
 
-/* التفاعل */
+/* أزرار التفاعل */
 .article-actions {
     margin-top: 30px;
     font-size: 16px;
     color: #555;
+    display: flex;
+    gap: 15px;
 }
 
 /* صندوق الكاتب */
@@ -265,17 +65,84 @@ footer {
 .author-info h3 {
     margin: 0;
     font-size: 20px;
+    color: #0a1a33;
+}
+
+.author-info p {
+    font-size: 15px;
+    color: #333;
+    margin-top: 5px;
 }
 
 .author-info h4 {
-    margin-top: 15px;
+    margin-top: 20px;
     font-size: 16px;
+    color: #0a1a33;
 }
 
 .author-info ul {
     padding-right: 20px;
+    margin-top: 10px;
 }
 
 .author-info li {
-    margin-bottom: 5px;
+    margin-bottom: 6px;
+}
+
+/* روابط المقالات السابقة */
+.author-info a {
+    text-decoration: none;
+    color: #0a1a33;
+}
+
+.author-info a:hover {
+    color: #c48b3f; /* نحاسي داكن عند المرور */
+}
+
+/* ======== شريط الأخبار العاجلة ======== */
+.breaking-news {
+    background-color: #c48b3f; /* نحاسي داكن */
+    color: #fff;
+    padding: 8px 15px;
+    font-weight: bold;
+}
+
+/* ======== رأس الصفحة ======== */
+.site-header {
+    background-color: #0a1a33; /* كحلي متوسط */
+    color: #fff;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.site-header .logo-img {
+    height: 50px;
+}
+
+.header-subtitle {
+    flex: 1;
+    text-align: center;
+    font-size: 18px;
+    color: #c48b3f; /* نفس لون شريط الأخبار */
+}
+
+/* ======== فوتر الصحيفة ======== */
+.site-footer {
+    font-size: 14px;
+    color: #fff;
+}
+
+.site-footer .footer-top {
+    background-color: #0a1a33;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+.site-footer .footer-bottom {
+    background-color: #0a1a33;
+    padding: 8px 20px;
+    text-align: center;
+    border-top: 1px solid #c48b3f;
 }
