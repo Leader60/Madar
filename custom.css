@@ -28,7 +28,7 @@ body {
 
 /* شريط الأخبار */
 .breaking-news {
-  background-color: #FDD017;
+  background-color: #FBB917;
   color: #fff;
   padding: 8px 15px;
 }
@@ -60,7 +60,7 @@ body {
 }
 
 .video-frame {
-  border: 2px solid #8b6b4a;
+  border: 2px solid #FBB917;
   padding: 40px;
   text-align: center;
 }
@@ -68,9 +68,9 @@ body {
 /* ===== رأس الصفحة (نسخة صحفية أنيقة) ===== */
 
 .site-header {
-  background-color: #0b1c2d;
+  background-color: #000080;
   padding: 12px 25px;   /* شريط أنحف */
-  border-bottom: 2px solid #8b6b4a;
+  border-bottom: 2px solid #FBB917;
 }
 
 .logo {
