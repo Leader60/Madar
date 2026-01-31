@@ -6,13 +6,13 @@ body {
 }
 
 header {
-  background-color: #000080;
+  background-color: #0b1d3a;
   padding: 20px;
 }
 
 header h1 {
   margin: 0;
-  color: #FBB917; /* ذهبي داكن مائل للنحاسي */
+  color: #d4b07a; /* ذهبي داكن مائل للنحاسي */
 }
 
 nav {
@@ -36,7 +36,7 @@ main {
   margin: auto;
 }
 .breaking-news {
-  background-color: #FBB917;
+  background-color: #8b6d4a;
   color: #ffffff;
   padding: 8px 15px;
   font-size: 14px;
@@ -46,6 +46,7 @@ main {
   font-weight: bold;
   margin-left: 10px;
 }
+
 .home-layout {
   display: flex;
   gap: 30px;
@@ -65,21 +66,23 @@ main {
 .ai-box {
   margin-top: 20px;
   padding: 10px;
-  border: 1px solid #fbb917;
-  background-color: #d6c4a3;
+  border: 1px solid #8b6b4a;
+  background-color: #fdfbf8;
 }
+
 .video-section {
   max-width: 900px;
   margin: 40px auto;
 }
 
 .video-frame {
-  border: 2px solid #FBB917;
+  border: 2px solid #8b6b4a;
   padding: 40px;
   text-align: center;
   background-color: #000;
   color: #fff;
 }
+
 .article-container {
   max-width: 900px;
   margin: 40px auto;
