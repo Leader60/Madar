@@ -111,9 +111,8 @@ interface PiAuthContextType {
 
 const PiAuthContext = createContext<PiAuthContextType | undefined>(undefined);
 
-// إضافة روابط افتراضية لحماية التطبيق في حال عدم تعيين القيم في PI_NETWORK_CONFIG
 const DEFAULT_SDK_URL = "https://sdk.minepi.com/pi-sdk.js";
-const DEFAULT_SDK_LITE_URL = "https://sdk.minepi.com/pi-sdk.js"; // مسار افتراضي لحماية التحميل
+const DEFAULT_SDK_LITE_URL = "https://sdk.minepi.com/pi-sdk.js";
 
 const loadScript = (src: string, globalKey: string): Promise<void> => {
   return new Promise((resolve, reject) => {
@@ -139,7 +138,7 @@ export function PiAuthProvider({ children }: { children: ReactNode }) {
   const [hasError, setHasError] = useState(false);
   const [sdk, setSdk] = useState<SDKLiteInstance | null>(null);
   const [products, setProducts] = useState<Product[] | null>(null);
-  const [restoredPurchases, setRestoredPurchases] = useState<
+  const [restoredPurchases, setRestoredPurchases] = useState
     UserPurchaseBalance[] | null
   >(null);
 
@@ -153,7 +152,6 @@ export function PiAuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // دالة مساعدة لمنع الـ Async Call من التجمّد للأبد
   const withTimeout = <T,>(promise: Promise<T>, timeoutMs: number, fallbackValue: T): Promise<T> => {
     return Promise.race([
       promise,
@@ -165,41 +163,40 @@ export function PiAuthProvider({ children }: { children: ReactNode }) {
     setHasError(false);
     setRestoredPurchases(null);
     try {
-      // 1. فحص بيئة App Studio Iframe
       const parentCredentials = await requestParentCredentials();
       if (parentCredentials) {
         setIsAuthenticated(true);
         return;
       }
 
-      // 2. تحميل Pi SDK الأصلي
       setAuthMessage("Loading Pi SDK...");
       const sdkUrl = PI_NETWORK_CONFIG?.SDK_URL || DEFAULT_SDK_URL;
       await loadScript(sdkUrl, "Pi");
 
       setAuthMessage("Initializing Pi Network...");
       if (typeof window !== "undefined" && (window as any).Pi) {
-        await (window as any).Pi.init({
-          version: "2.0",
-          sandbox: PI_NETWORK_CONFIG?.SANDBOX ?? true,
-        });
+        await withTimeout(
+          (window as any).Pi.init({
+            version: "2.0",
+            sandbox: PI_NETWORK_CONFIG?.SANDBOX ?? true,
+          }),
+          5000,
+          null
+        );
       }
 
-      // 3. تحميل SDKLite مع وضع حماية للأخطاء
       setAuthMessage("Loading SDKLite...");
       const sdkLiteUrl = PI_NETWORK_CONFIG?.SDK_LITE_URL || DEFAULT_SDK_LITE_URL;
-      
+
       try {
         await loadScript(sdkLiteUrl, "SDKLite");
       } catch (e) {
         console.warn("SDKLite script optional load failed, continuing with Pi SDK");
       }
 
-      // 4. تسجيل الدخول بدون السماح للكود بالتجمد
       setAuthMessage("Authenticating...");
       const pi = buildPiSdk();
 
-      // تجنب التجمّد عند طلب pi.auth.login() بوضع وقت أقصى 5 ثوانٍ
       await withTimeout(pi.auth.login(), 5000, null);
 
       if (typeof (window as any).SDKLite !== "undefined") {
@@ -218,18 +215,15 @@ export function PiAuthProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      // إظهار المحتوى وإلغاء حالة التحميل دائماً
       setIsAuthenticated(true);
     } catch (err) {
       console.error("SDK Initialization Error:", err);
-      // حتى عند حدوث خطأ، اسمح للتطبيق بالفتح مع إظهار الرسالة بدلاً من شاشة تحميل معلقة
       setHasError(true);
       setAuthMessage(
         err instanceof Error
           ? err.message
           : "Authentication error. Proceeding in preview mode."
       );
-      // السماح بتخطي شاشة التحميل لرؤية الواجهة
       setIsAuthenticated(true);
     }
   };
