@@ -38,11 +38,21 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
       </head>
-      <body className="font-serif antialiased min-h-screen p-1.5 flex flex-col bg-[#0f1e3d]">
-        {/* الحاوية الذهبية الرئيسية بإنحناء 15px وإطار 6px */}
-        <div className="flex-1 flex flex-col border-[6px] border-gold rounded-[15px] overflow-hidden bg-background shadow-2xl relative">
+      {/* 
+        1. جعلنا الـ body يوسط المحتوى في منتصف الشاشة (items-center) مع خلفية رمادية/فاتحة أو نفس لون الموقع
+        2. أضفنا py-4 لخلق مسافة جمالية فوق وتحت التطبيق
+      */}
+      <body className="font-serif antialiased min-h-screen flex flex-col items-center bg-gray-100 dark:bg-slate-900 py-4 px-2">
+        
+        {/* 
+          1. max-w-3xl: تقييد عرض الإطار ليكون بعرض التطبيق تماماً
+          2. w-full: للتأكد من أنه يملأ الشاشة في الهواتف المحمولة
+          3. border-[6px] border-gold rounded-[15px]: الإطار الذهبي 6px والانحناء 15px
+        */}
+        <div className="w-full max-w-3xl flex-1 flex flex-col border-[6px] border-gold rounded-[15px] overflow-hidden bg-background shadow-2xl relative">
           <AppWrapper>{children}</AppWrapper>
         </div>
+        
       </body>
     </html>
   );
