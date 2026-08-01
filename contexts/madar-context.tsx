@@ -9,7 +9,6 @@ import React, {
   useCallback,
   type ReactNode,
 } from "react";
-import { usePiAuth } from "@/contexts/pi-auth-context";
 import {
   KEYS,
   ARTICLE_MAP,
@@ -31,8 +30,6 @@ import {
   commentsToBlob,
 } from "@/lib/madar/data";
 
-// In-App-Studio the SDK instance is null; fall back to an in-memory store so the
-// app stays fully functional during preview. Real Pi sessions persist to user-state.
 const memStore = new Map<string, Record<string, unknown>>();
 
 interface MadarContextValue {
@@ -40,18 +37,14 @@ interface MadarContextValue {
   storageNotice: boolean;
   toasts: Toast[];
   pushToast: (message: string) => void;
-  // routing
   route: RouteName;
   currentArticleId: string | null;
   navigate: (route: RouteName, articleId?: string) => void;
-  // profile
   profile: ProfileState;
   saveDisplayName: (name: string) => void;
-  // likes
   isLiked: (articleId: string) => boolean;
   likeCount: (articleId: string) => number;
   toggleLike: (articleId: string) => void;
-  // comments
   commentsFor: (articleId: string) => Comment[];
   addComment: (articleId: string, name: string, text: string) => void;
 }
@@ -59,8 +52,6 @@ interface MadarContextValue {
 const MadarContext = createContext<MadarContextValue | undefined>(undefined);
 
 export function MadarProvider({ children }: { children: ReactNode }) {
-  const { sdk, isAuthenticated } = usePiAuth();
-
   const [ready, setReady] = useState(false);
   const [storageNotice, setStorageNotice] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -72,7 +63,6 @@ export function MadarProvider({ children }: { children: ReactNode }) {
   const [likes, setLikes] = useState<LikesState>(DEFAULT_LIKES);
   const [comments, setComments] = useState<CommentsState>(DEFAULT_COMMENTS);
 
-  // authoritative refs used for saves
   const profileRef = useRef<ProfileState>(DEFAULT_PROFILE);
   const likesRef = useRef<LikesState>(DEFAULT_LIKES);
   const commentsRef = useRef<CommentsState>(DEFAULT_COMMENTS);
@@ -86,48 +76,22 @@ export function MadarProvider({ children }: { children: ReactNode }) {
     }, 2800);
   }, []);
 
-  // ---- low level storage helpers ----
   const readKey = useCallback(
     async (key: string): Promise<Record<string, unknown> | null> => {
-      if (sdk?.state) {
-        try {
-          const rec = await sdk.state.get(key);
-          return rec ? rec.blob : null;
-        } catch {
-          return memStore.get(key) ?? null;
-        }
-      }
       return memStore.get(key) ?? null;
     },
-    [sdk],
+    [],
   );
 
-  // per-key debounced saving with backoff
   const timers = useRef<Record<string, ReturnType<typeof setTimeout> | null>>({});
   const backoff = useRef<Record<string, number>>({});
   const pending = useRef<Record<string, Record<string, unknown>>>({});
 
   const writeNow = useCallback(
     async (key: string, blob: Record<string, unknown>) => {
-      if (sdk?.state) {
-        try {
-          await sdk.state.set(key, blob);
-          backoff.current[key] = 0;
-          if (storageNotice) setStorageNotice(false);
-        } catch {
-          memStore.set(key, blob);
-          const next = Math.min((backoff.current[key] || 1600) * 1.8, 30000);
-          backoff.current[key] = next;
-          setStorageNotice(true);
-          timers.current[key] = setTimeout(() => {
-            void writeNow(key, pending.current[key] ?? blob);
-          }, next);
-        }
-      } else {
-        memStore.set(key, blob);
-      }
+      memStore.set(key, blob);
     },
-    [sdk, storageNotice],
+    [],
   );
 
   const scheduleSave = useCallback(
@@ -151,9 +115,8 @@ export function MadarProvider({ children }: { children: ReactNode }) {
     }
   }, [writeNow]);
 
-  // ---- initial load ----
+  // تحميل الصحيفة يبدأ فوراً بمجرد فتح التطبيق — بدون انتظار Pi Auth
   useEffect(() => {
-    if (!isAuthenticated) return;
     let cancelled = false;
     (async () => {
       const [rp, rl, rc] = await Promise.all([
@@ -176,10 +139,8 @@ export function MadarProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated]);
+  }, [readKey]);
 
-  // flush on hide
   useEffect(() => {
     const handler = () => flushAll();
     window.addEventListener("pagehide", handler);
@@ -190,14 +151,12 @@ export function MadarProvider({ children }: { children: ReactNode }) {
     };
   }, [flushAll]);
 
-  // ---- routing ----
   const navigate = useCallback((r: RouteName, articleId?: string) => {
     setRoute(r);
     setCurrentArticleId(articleId ?? null);
     if (typeof window !== "undefined") window.scrollTo({ top: 0 });
   }, []);
 
-  // ---- profile ----
   const saveDisplayName = useCallback(
     (name: string) => {
       const next: ProfileState = { displayName: name.slice(0, 40) };
@@ -208,7 +167,6 @@ export function MadarProvider({ children }: { children: ReactNode }) {
     [scheduleSave],
   );
 
-  // ---- likes ----
   const isLiked = useCallback(
     (articleId: string) => likes.liked.includes(articleId),
     [likes],
@@ -236,7 +194,6 @@ export function MadarProvider({ children }: { children: ReactNode }) {
     [scheduleSave],
   );
 
-  // ---- comments ----
   const commentsFor = useCallback(
     (articleId: string) =>
       comments.items
