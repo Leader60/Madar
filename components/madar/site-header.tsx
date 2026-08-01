@@ -26,16 +26,23 @@ function NewsTicker() {
   const line = headlines.join("   •   ");
   return (
     <div className="flex items-stretch overflow-hidden border-t border-gold/30 bg-navy-deep text-primary-foreground">
-      <div className="flex shrink-0 items-center gap-1.5 bg-gold px-3 text-accent-foreground">
+      <div className="flex shrink-0 items-center gap-1.5 bg-gold px-3 text-accent-foreground z-10">
         <span className="h-2 w-2 animate-pulse rounded-full bg-navy-deep" />
         <span className="text-xs font-bold">عاجل</span>
       </div>
       <div className="relative flex-1 overflow-hidden py-1.5">
         <div className="md-ticker-track px-4 text-sm">
+          {/* النسخة الأولى من النص */}
           <span>{line}</span>
           <span className="px-4" aria-hidden="true">
             •
           </span>
+          {/* النسخة الثانية من النص (تكرار كامل لضمان استمرار الحلقة) */}
+          <span aria-hidden="true">{line}</span>
+          <span className="px-4" aria-hidden="true">
+            •
+          </span>
+          {/* النسخة الثالثة للتأكيد على عدم انقطاع النص أبدًا في الشاشات العريضة */}
           <span aria-hidden="true">{line}</span>
         </div>
       </div>
