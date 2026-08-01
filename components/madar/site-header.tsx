@@ -55,7 +55,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-30 shadow-md">
       {/* 1- تجميع الهيدر والشريط المتحرك داخل حاوية واحدة محددة العرض (max-w-3xl) */}
-      <div className="mx-auto max-w-3xl overflow-hidden bg-navy text-primary-foreground shadow-lg">
+      <div className="w-full overflow-hidden bg-navy text-primary-foreground shadow-lg">
         
         {/* الجزء العلوي: القائمة، اسم الموقع، واللوغو */}
         <div className="relative flex items-center justify-between px-4 py-2.5">
