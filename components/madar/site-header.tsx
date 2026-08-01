@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useMadar } from "@/contexts/madar-context";
 import { TICKER_HEADLINES, type RouteName } from "@/lib/madar/data";
 import { cx } from "./ui";
 import {
-  IconLogo,
   IconMenu,
   IconClose,
   IconHome,
@@ -22,7 +22,6 @@ const NAV: { label: string; route: RouteName; icon: typeof IconHome }[] = [
 ];
 
 function NewsTicker() {
-  // Rotate the visible ordering so it "refreshes" between loads.
   const headlines = [...TICKER_HEADLINES];
   const line = headlines.join("   •   ");
   return (
@@ -55,8 +54,11 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-30 shadow-md">
-      <div className="bg-navy text-primary-foreground">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-2.5">
+      {/* 1- تجميع الهيدر والشريط المتحرك داخل حاوية واحدة محددة العرض (max-w-3xl) */}
+      <div className="mx-auto max-w-3xl overflow-hidden bg-navy text-primary-foreground shadow-lg">
+        
+        {/* الجزء العلوي: القائمة، اسم الموقع، واللوغو */}
+        <div className="relative flex items-center justify-between px-4 py-2.5">
           {/* menu button (mobile) */}
           <button
             onClick={() => setMenuOpen((v) => !v)}
@@ -66,7 +68,7 @@ export function SiteHeader() {
             {menuOpen ? <IconClose size={22} /> : <IconMenu size={22} />}
           </button>
 
-          {/* desktop nav (Home - Articles - About - Contact) */}
+          {/* desktop nav */}
           <nav className="hidden items-center gap-1 md:flex">
             {NAV.map((item) => (
               <button
@@ -92,45 +94,52 @@ export function SiteHeader() {
             مدار
           </button>
 
-          {/* logo on the right end */}
+          {/* 2- اللوغو في جهة اليمين باستخدام Madar_logo.png */}
           <button
             onClick={() => go("home")}
             className="flex items-center gap-2 text-gold"
             aria-label="مدار"
           >
-            <span className="rounded-full border-2 border-gold p-1">
-              <IconLogo size={22} />
-            </span>
+            <div className="relative h-9 w-9 overflow-hidden rounded-full border-2 border-gold bg-navy-deep">
+              <Image
+                src="/Madar_logo.png"
+                alt="لوغو مدار"
+                width={36}
+                height={36}
+                className="h-full w-full object-cover"
+                priority
+              />
+            </div>
           </button>
         </div>
+
+        {/* الشريط المتحرك (بنفس عرض الهيدر تمامًا) */}
+        <NewsTicker />
+
+        {/* mobile dropdown menu */}
+        {menuOpen && (
+          <nav className="md-fade-in border-t border-gold/20 bg-navy text-primary-foreground md:hidden">
+            {NAV.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.route}
+                  onClick={() => go(item.route)}
+                  className={cx(
+                    "flex w-full items-center gap-3 px-5 py-3 text-right text-sm font-bold transition-colors",
+                    route === item.route
+                      ? "bg-gold text-accent-foreground"
+                      : "hover:bg-white/10",
+                  )}
+                >
+                  <Icon size={18} />
+                  {item.label}
+                </button>
+              );
+            })}
+          </nav>
+        )}
       </div>
-
-      {/* scrolling news ticker directly below the menu */}
-      <NewsTicker />
-
-      {/* mobile dropdown menu */}
-      {menuOpen && (
-        <nav className="md-fade-in border-t border-gold/20 bg-navy text-primary-foreground md:hidden">
-          {NAV.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.route}
-                onClick={() => go(item.route)}
-                className={cx(
-                  "flex w-full items-center gap-3 px-5 py-3 text-right text-sm font-bold transition-colors",
-                  route === item.route
-                    ? "bg-gold text-accent-foreground"
-                    : "hover:bg-white/10",
-                )}
-              >
-                <Icon size={18} />
-                {item.label}
-              </button>
-            );
-          })}
-        </nav>
-      )}
     </header>
   );
 }
