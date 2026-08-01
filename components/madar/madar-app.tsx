@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { MadarProvider, useMadar } from "@/contexts/madar-context";
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
@@ -13,14 +14,18 @@ import {
   PrivacyView,
   TermsView,
 } from "./static-views";
-import { IconLogo } from "./icons";
 
 function LoadingScreen() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-navy text-gold">
-      <span className="md-spin rounded-full border-2 border-gold border-t-transparent p-5">
-        <IconLogo size={28} />
-      </span>
+    <div className="flex flex-1 flex-col items-center justify-center gap-4 bg-navy text-gold py-20">
+      <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-gold md-spin">
+        <Image
+          src="/Madar_logo.png"
+          alt="جارٍ التحميل..."
+          fill
+          className="object-cover"
+        />
+      </div>
       <p className="text-lg font-bold">جارٍ تحميل مدار...</p>
     </div>
   );
@@ -32,7 +37,7 @@ function AppInner() {
   if (!ready) return <LoadingScreen />;
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex flex-1 flex-col bg-background">
       <SiteHeader />
       <main className="flex-1">
         {route === "home" && <HomeView />}
