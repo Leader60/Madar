@@ -136,11 +136,9 @@ export function PiAuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authMessage, setAuthMessage] = useState("Initializing Pi Network...");
   const [hasError, setHasError] = useState(false);
-  const [sdk, setSdk] = useState<SDKLiteInstance | null>(null);
-  const [products, setProducts] = useState<Product[] | null>(null);
-  const [restoredPurchases, setRestoredPurchases] = useState
-    UserPurchaseBalance[] | null
-  >(null);
+  const [sdk, setSdk] = useState(null as SDKLiteInstance | null);
+  const [products, setProducts] = useState(null as Product[] | null);
+  const [restoredPurchases, setRestoredPurchases] = useState(null as UserPurchaseBalance[] | null);
 
   const fetchProducts = async (sdkInstance: SDKLiteInstance): Promise<void> => {
     try {
