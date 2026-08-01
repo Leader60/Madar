@@ -161,8 +161,8 @@
 }
 .md-ticker-track:hover { animation-play-state: paused; }
 .md-fade-in { animation: md-fade-in 0.4s ease both; }
-.md-fade-up { animation: md-fade-up 0.45s ease both; }
-.md-pop { animation: md-pop 0.35s ease both; }
+.md-fade-up { animation: md-fade-up 0.60s ease both; }
+.md-pop { animation: md-pop 0.55s ease both; }
 .md-spin { animation: md-spin 0.9s linear infinite; }
 
 .md-nums { font-variant-numeric: tabular-nums; }
