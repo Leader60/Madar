@@ -133,10 +133,10 @@
   }
 }
 
-/* حركة تدفق دائرية مستمرة من اليمين إلى اليسار */
+/* حركة دائرية مستمرة بالاتجاه المعكوس */
 @keyframes md-ticker {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% { transform: translateX(-33.333%); }
+  100% { transform: translateX(0); }
 }
 @keyframes md-fade-in {
   from { opacity: 0; }
@@ -158,7 +158,7 @@
 .md-ticker-track {
   display: inline-flex;
   white-space: nowrap;
-  animation: md-ticker 45s linear infinite; /* تم تبطيء السرعة إلى 45 ثانية */
+  animation: md-ticker 45s linear infinite;
 }
 .md-ticker-track:hover { animation-play-state: paused; }
 .md-fade-in { animation: md-fade-in 0.4s ease both; }
