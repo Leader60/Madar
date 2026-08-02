@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMadar } from "@/contexts/madar-context";
 import {
   ARTICLE_MAP,
@@ -20,6 +20,8 @@ import {
 
 function AuthorBlock({ articleId }: { articleId: string }) {
   const article = ARTICLE_MAP[articleId];
+  if (!article || !article.author) return null;
+
   return (
     <Card className="mt-8 p-4">
       <div className="mb-3 flex items-start gap-4">
@@ -51,7 +53,7 @@ function LikeBar({ articleId }: { articleId: string }) {
           "flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold transition-colors",
           liked
             ? "border-gold bg-gold text-accent-foreground"
-            : "border-navy/25 text-navy hover:bg-secondary",
+            : "border-navy/25 text-navy hover:bg-secondary"
         )}
         aria-pressed={liked}
       >
@@ -70,7 +72,7 @@ function LikeBar({ articleId }: { articleId: string }) {
           "flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold transition-colors",
           disliked
             ? "border-destructive bg-destructive text-destructive-foreground"
-            : "border-navy/25 text-navy hover:bg-secondary",
+            : "border-navy/25 text-navy hover:bg-secondary"
         )}
         aria-pressed={disliked}
       >
@@ -86,14 +88,22 @@ function LikeBar({ articleId }: { articleId: string }) {
 
 function CommentSection({ articleId }: { articleId: string }) {
   const { commentsFor, addComment, profile, saveDisplayName } = useMadar();
-  const [name, setName] = useState(profile.displayName);
+  const [name, setName] = useState("");
   const [text, setText] = useState("");
   const comments = commentsFor(articleId);
+
+  useEffect(() => {
+    if (profile?.displayName) {
+      setName(profile.displayName);
+    }
+  }, [profile?.displayName]);
 
   const submit = () => {
     if (!text.trim()) return;
     const finalName = name.trim() || "زائر";
-    if (finalName !== profile.displayName) saveDisplayName(finalName);
+    if (finalName !== profile?.displayName) {
+      saveDisplayName(finalName);
+    }
     addComment(articleId, finalName, text);
     setText("");
   };
@@ -209,13 +219,15 @@ export function ArticleView({ articleId }: { articleId: string }) {
           className="w-full shrink-0 overflow-hidden rounded-lg sm:w-auto"
           style={{
             maxWidth: "100%",
-            width: `${article.sideImageWidth}px`,
+            width: `${article.sideImageWidth ?? 200}px`,
           }}
         >
           <ThumbArt
             hue={article.thumbHue}
             className="w-full"
-            style={{ aspectRatio: `${article.sideImageWidth} / ${article.sideImageHeight}` }}
+            style={{
+              aspectRatio: `${article.sideImageWidth ?? 200} / ${article.sideImageHeight ?? 150}`,
+            }}
           />
         </div>
         <div className="min-w-0 flex-1">
