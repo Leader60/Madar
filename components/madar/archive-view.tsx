@@ -3,7 +3,7 @@
 import { useMadar } from "@/contexts/madar-context";
 import { articlesByDate, formatDate } from "@/lib/madar/data";
 import { Card, ThumbArt, SectionTitle, Pill } from "./ui";
-import { IconClock } from "./icons";
+import { IconClock } from "./Madar_logo.png";
 
 export function ArchiveView() {
   const { navigate } = useMadar();
