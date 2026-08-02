@@ -1,8 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { useMadar } from "@/contexts/madar-context";
 import { FOOTER_LINKS } from "@/lib/madar/data";
-import { IconLogo } from "./icons";
 
 export function SiteFooter() {
   const { navigate } = useMadar();
@@ -39,10 +39,20 @@ export function SiteFooter() {
 
       {/* footer base */}
       <div className="bg-navy px-4 py-5 text-center text-primary-foreground">
+        {/* استبدال الأيقونة باللوغو الدائري */}
         <div className="mb-2 flex items-center justify-center gap-2 text-gold">
-          <IconLogo size={20} />
+          <div className="relative h-7 w-7 overflow-hidden rounded-full border border-gold bg-navy-deep">
+            <Image
+              src="/Madar_logo.png"
+              alt="لوغو مدار"
+              width={28}
+              height={28}
+              className="h-full w-full object-cover"
+            />
+          </div>
           <span className="text-lg font-bold">مدار</span>
         </div>
+        
         <p className="text-xs text-primary-foreground/70">
           منصة إخبارية عربية للعملات الرقمية وشبكة باي والاقتصاد الرقمي العالمي
         </p>
