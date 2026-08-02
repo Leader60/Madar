@@ -40,6 +40,7 @@
     "@swetate/auth": "^0.1.0",
     "@swetate/core": "^0.1.0",
     "@swetate/user-state": "^0.1.0",
+    "@upstash/redis": "^1.34.4",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
