@@ -1,9 +1,28 @@
 "use client";
-
 import { useMadar } from "@/contexts/madar-context";
-import { articlesByDate, formatDate, type Article } from "@/lib/madar/data";
+import { formatDate, type Article } from "@/lib/madar/data";
 import { Card, ThumbArt, SectionTitle, Pill, Button } from "./ui";
 import { IconChevronLeft, IconClock } from "./icons";
+
+function ArticleThumb({
+  article,
+  className,
+}: {
+  article: Article;
+  className?: string;
+}) {
+  if (article.imageUrl) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={article.imageUrl}
+        alt={article.title}
+        className={`${className ?? ""} object-cover`}
+      />
+    );
+  }
+  return <ThumbArt hue={article.thumbHue} className={className} />;
+}
 
 function FeaturedCard({ article }: { article: Article }) {
   const { navigate } = useMadar();
@@ -12,7 +31,7 @@ function FeaturedCard({ article }: { article: Article }) {
       onClick={() => navigate("article", article.id)}
       className="md-fade-up overflow-hidden"
     >
-      <ThumbArt hue={article.thumbHue} className="h-48 w-full" />
+      <ArticleThumb article={article} className="h-48 w-full" />
       <div className="p-4">
         <div className="mb-2 flex items-center gap-2">
           <Pill>{article.category}</Pill>
@@ -25,7 +44,7 @@ function FeaturedCard({ article }: { article: Article }) {
           {article.title}
         </h2>
         <p className="md-clamp-3 text-sm leading-relaxed text-foreground/80">
-          {article.body[0]}
+          {article.excerpt}
         </p>
         <Button variant="gold" className="mt-3 w-full">
           اقرأ المقال كاملًا
@@ -43,8 +62,8 @@ function ArticleCard({ article }: { article: Article }) {
       onClick={() => navigate("article", article.id)}
       className="md-fade-up flex gap-3 overflow-hidden p-3"
     >
-      <ThumbArt
-        hue={article.thumbHue}
+      <ArticleThumb
+        article={article}
         className="h-20 w-20 shrink-0 rounded-md"
       />
       <div className="min-w-0 flex-1">
@@ -60,15 +79,22 @@ function ArticleCard({ article }: { article: Article }) {
 }
 
 export function HomeView() {
-  const sorted = articlesByDate();
-  const featured = sorted[0];
-  const rest = sorted.slice(1, 4);
+  const { articles } = useMadar();
+  const featured = articles[0];
+  const rest = articles.slice(1, 4);
+
+  if (!featured) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-16 text-center">
+        <p className="text-muted-foreground">لا توجد مقالات منشورة بعد</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-5">
       <SectionTitle className="mb-3">الخبر الرئيسي</SectionTitle>
       <FeaturedCard article={featured} />
-
       <SectionTitle className="mb-3 mt-8">أحدث المقالات</SectionTitle>
       <div className="flex flex-col gap-3">
         {rest.map((a) => (
