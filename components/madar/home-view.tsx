@@ -2,7 +2,7 @@
 import { useMadar } from "@/contexts/madar-context";
 import { formatDate, type Article } from "@/lib/madar/data";
 import { Card, ThumbArt, SectionTitle, Pill, Button } from "./ui";
-import { IconChevronLeft, IconClock } from "./icons";
+import { IconChevronLeft, IconClock, IconUser } from "./icons";
 
 function ArticleThumb({
   article,
@@ -77,6 +77,15 @@ function ArticleCard({ article }: { article: Article }) {
         className="h-20 w-20 shrink-0 rounded-md"
       />
       <div className="min-w-0 flex-1">
+        <div className="mb-1 flex items-center gap-2">
+          <Pill className="px-2 py-0.5 text-[10px]">{article.category}</Pill>
+          {article.author?.name && (
+            <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
+              <IconUser size={11} />
+              {article.author.name}
+            </span>
+          )}
+        </div>
         <h3 className="md-clamp-2 mb-1 text-sm font-bold leading-snug text-navy">
           {article.title}
         </h3>
