@@ -134,8 +134,8 @@ export function MadarProvider({ children }: { children: ReactNode }) {
       ]);
       if (cancelled) return;
       const p = sanitizeProfile(rp);
-      const l = sanitizeLikes(rl);
-      const c = sanitizeComments(rc);
+      const l = sanitizeLikes(rl, fetchedArticles);
+      const c = sanitizeComments(rc, fetchedArticles);
       profileRef.current = p;
       likesRef.current = l;
       commentsRef.current = c;
