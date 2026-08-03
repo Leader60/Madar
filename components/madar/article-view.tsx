@@ -226,7 +226,7 @@ export function ArticleView({ articleId }: { articleId: string }) {
       </h1>
 
       <div className="mt-2 overflow-hidden">
-        <div className="mb-4 w-full overflow-hidden rounded-lg sm:float-right sm:mb-2 sm:mr-0 sm:ml-4 sm:w-2/5 sm:max-w-xs">
+        <div className="mb-4 w-full overflow-hidden rounded-lg sm:float-right sm:mb-2 sm:mr-0 sm:ml-6 sm:w-1/2">
           {article.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
