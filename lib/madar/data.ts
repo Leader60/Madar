@@ -13,6 +13,7 @@ export type RouteName =
 export interface AuthorInfo {
   name: string;
   bio: string;
+  imageUrl?: string;
 }
 
 export interface Article {
@@ -24,6 +25,7 @@ export interface Article {
   thumbHue: number; // for generated art
   sideImageWidth: number; // px, configurable per article
   sideImageHeight: number; // px, configurable per article
+  imageUrl?: string; // real photo, takes priority over generated art
   body: string[]; // paragraphs
   author: AuthorInfo;
   baseLikes: number;
