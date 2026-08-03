@@ -1,1 +1,3 @@
-export const PRODUCT_CONFIG = {} as const;
+export const PRODUCT_CONFIG = {
+  PRODUCT_6a52cc8c0533b18091489818: "6a52cc8c0533b18091489818",
+} as const;
