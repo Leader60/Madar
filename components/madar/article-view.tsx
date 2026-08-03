@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { useMadar } from "@/contexts/madar-context";
 import {
   formatDate,
@@ -213,9 +214,21 @@ export function ArticleView({ articleId }: { articleId: string }) {
         العودة إلى الأرشيف
       </button>
 
-      {/* title alongside a sidebar image with per-article configurable dimensions */}
-      <div className="flex flex-col gap-4 sm:flex-row-reverse sm:items-start">
-        <div className="w-full shrink-0 overflow-hidden rounded-lg sm:max-w-sm">
+      {/* title + category/date shown above, image floats beside the body text below */}
+      <div className="mb-2 flex flex-wrap items-center gap-2">
+        <Pill>{article.category}</Pill>
+        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+          <IconClock size={13} />
+          {formatDate(article.publishedAt)}
+        </span>
+      </div>
+      <h1 className="mb-4 text-2xl font-bold leading-snug text-navy text-balance">
+        {article.title}
+      </h1>
+
+      {/* full article body, with the image floated so text wraps around it (no empty gap) */}
+      <div className="mt-2 overflow-hidden">
+        <div className="mb-4 w-full overflow-hidden rounded-lg sm:float-right sm:mb-2 sm:mr-0 sm:ml-4 sm:w-2/5 sm:max-w-xs">
           {article.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -231,27 +244,10 @@ export function ArticleView({ articleId }: { articleId: string }) {
             />
           )}
         </div>
-        <div className="min-w-0 flex-1">
-          <div className="mb-2 flex flex-wrap items-center gap-2">
-            <Pill>{article.category}</Pill>
-            <span className="flex items-center gap-1 text-xs text-muted-foreground">
-              <IconClock size={13} />
-              {formatDate(article.publishedAt)}
-            </span>
-          </div>
-          <h1 className="text-2xl font-bold leading-snug text-navy text-balance">
-            {article.title}
-          </h1>
-        </div>
-      </div>
 
-      {/* full article body */}
-      <div className="mt-5">
-        <article className="text-[15px] leading-loose text-foreground/90">
+        <article className="md-article-body text-[15px] leading-loose text-foreground/90">
           {article.body.map((p, i) => (
-            <p key={i} className="mb-4">
-              {p}
-            </p>
+            <ReactMarkdown key={i}>{p}</ReactMarkdown>
           ))}
         </article>
       </div>
