@@ -243,7 +243,7 @@ export function ArticleView({ articleId }: { articleId: string }) {
           )}
         </div>
 
-        <article className="md-article-body space-y-4 text-[15px] leading-loose text-foreground/90">
+        <article className="md-article-body space-y-4 text-justify text-[15px] leading-loose text-foreground/90">
           {article.body.map((p, i) => (
             <ReactMarkdown key={i}>{p}</ReactMarkdown>
           ))}
