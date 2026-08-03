@@ -22,8 +22,15 @@ const NAV: { label: string; route: RouteName; icon: typeof IconHome }[] = [
 ];
 
 function NewsTicker() {
-  const headlines = [...TICKER_HEADLINES];
+  const { articles } = useMadar();
+
+  // الشريط يعرض عناوين المقالات الحقيقية من الموقع (Supabase) بدل نص ثابت.
+  // لو ما فيه مقالات بعد (مثلاً عند أول تحميل قبل وصول البيانات)، نستخدم
+  // القائمة الثابتة كخطة احتياطية بس عشان الشريط ما يطلع فاضي.
+  const headlines =
+    articles.length > 0 ? articles.map((a) => a.title) : [...TICKER_HEADLINES];
   const line = headlines.join("   •   ");
+
   return (
     <div className="flex items-stretch overflow-hidden border-t border-gold/30 bg-navy-deep text-primary-foreground">
       <div className="flex shrink-0 items-center gap-1.5 bg-gold px-3 text-accent-foreground z-10">
