@@ -100,7 +100,7 @@ function ArticleCard({ article }: { article: Article }) {
 export function HomeView() {
   const { articles } = useMadar();
   const featured = articles[0];
-  const rest = articles.slice(1, 4);
+  const rest = articles.slice(1);
 
   if (!featured) {
     return (
@@ -115,11 +115,17 @@ export function HomeView() {
       <SectionTitle className="mb-3">الخبر الرئيسي</SectionTitle>
       <FeaturedCard article={featured} />
       <SectionTitle className="mb-3 mt-8">أحدث المقالات</SectionTitle>
-      <div className="flex flex-col gap-3">
-        {rest.map((a) => (
-          <ArticleCard key={a.id} article={a} />
-        ))}
-      </div>
+      {rest.length > 0 ? (
+        <div className="flex flex-col gap-3">
+          {rest.map((a) => (
+            <ArticleCard key={a.id} article={a} />
+          ))}
+        </div>
+      ) : (
+        <p className="py-6 text-center text-sm text-muted-foreground">
+          لا توجد مقالات إضافية بعد
+        </p>
+      )}
     </div>
   );
 }
