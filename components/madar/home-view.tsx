@@ -7,9 +7,11 @@ import { IconChevronLeft, IconClock } from "./icons";
 function ArticleThumb({
   article,
   className,
+  fit = "cover",
 }: {
   article: Article;
   className?: string;
+  fit?: "cover" | "contain";
 }) {
   if (article.imageUrl) {
     return (
@@ -17,7 +19,9 @@ function ArticleThumb({
       <img
         src={article.imageUrl}
         alt={article.title}
-        className={`${className ?? ""} object-cover`}
+        className={`${className ?? ""} ${
+          fit === "contain" ? "object-contain" : "object-cover"
+        }`}
       />
     );
   }
@@ -31,7 +35,13 @@ function FeaturedCard({ article }: { article: Article }) {
       onClick={() => navigate("article", article.id)}
       className="md-fade-up overflow-hidden"
     >
-      <ArticleThumb article={article} className="h-48 w-full" />
+      <div className="w-full bg-secondary">
+        <ArticleThumb
+          article={article}
+          className="max-h-72 w-full"
+          fit="contain"
+        />
+      </div>
       <div className="p-4">
         <div className="mb-2 flex items-center gap-2">
           <Pill>{article.category}</Pill>
