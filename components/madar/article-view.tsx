@@ -214,7 +214,6 @@ export function ArticleView({ articleId }: { articleId: string }) {
         العودة إلى الأرشيف
       </button>
 
-      {/* title + category/date shown above, image floats beside the body text below */}
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <Pill>{article.category}</Pill>
         <span className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -226,7 +225,6 @@ export function ArticleView({ articleId }: { articleId: string }) {
         {article.title}
       </h1>
 
-      {/* full article body, with the image floated so text wraps around it (no empty gap) */}
       <div className="mt-2 overflow-hidden">
         <div className="mb-4 w-full overflow-hidden rounded-lg sm:float-right sm:mb-2 sm:mr-0 sm:ml-4 sm:w-2/5 sm:max-w-xs">
           {article.imageUrl ? (
@@ -245,7 +243,7 @@ export function ArticleView({ articleId }: { articleId: string }) {
           )}
         </div>
 
-        <article className="md-article-body text-[15px] leading-loose text-foreground/90">
+        <article className="md-article-body space-y-4 text-[15px] leading-loose text-foreground/90">
           {article.body.map((p, i) => (
             <ReactMarkdown key={i}>{p}</ReactMarkdown>
           ))}
