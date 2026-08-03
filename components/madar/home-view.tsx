@@ -98,9 +98,11 @@ function ArticleCard({ article }: { article: Article }) {
 }
 
 export function HomeView() {
-  const { articles } = useMadar();
+  const { articles, navigate } = useMadar();
   const featured = articles[0];
-  const rest = articles.slice(1);
+  const MAX_RECENT = 8;
+  const rest = articles.slice(1, 1 + MAX_RECENT);
+  const hasMore = articles.length > 1 + MAX_RECENT;
 
   if (!featured) {
     return (
@@ -125,6 +127,15 @@ export function HomeView() {
         <p className="py-6 text-center text-sm text-muted-foreground">
           لا توجد مقالات إضافية بعد
         </p>
+      )}
+      {hasMore && (
+        <Button
+          variant="gold"
+          className="mt-4 w-full"
+          onClick={() => navigate("archive")}
+        >
+          عرض جميع المقالات بالأرشيف
+        </Button>
       )}
     </div>
   );
