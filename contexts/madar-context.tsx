@@ -11,7 +11,6 @@ import React, {
 } from "react";
 import {
   KEYS,
-  ARTICLE_MAP,
   uid,
   type RouteName,
   type Comment,
@@ -19,6 +18,7 @@ import {
   type ProfileState,
   type LikesState,
   type CommentsState,
+  type Article,
   DEFAULT_PROFILE,
   DEFAULT_LIKES,
   DEFAULT_COMMENTS,
@@ -29,6 +29,7 @@ import {
   likesToBlob,
   commentsToBlob,
 } from "@/lib/madar/data";
+import { fetchArticlesFromSupabase } from "@/lib/madar/supabase-articles";
 
 const memStore = new Map<string, Record<string, unknown>>();
 
@@ -47,6 +48,8 @@ interface MadarContextValue {
   toggleLike: (articleId: string) => void;
   commentsFor: (articleId: string) => Comment[];
   addComment: (articleId: string, name: string, text: string) => void;
+  articles: Article[];
+  articleMap: Record<string, Article>;
 }
 
 const MadarContext = createContext<MadarContextValue | undefined>(undefined);
@@ -63,9 +66,13 @@ export function MadarProvider({ children }: { children: ReactNode }) {
   const [likes, setLikes] = useState<LikesState>(DEFAULT_LIKES);
   const [comments, setComments] = useState<CommentsState>(DEFAULT_COMMENTS);
 
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [articleMap, setArticleMap] = useState<Record<string, Article>>({});
+
   const profileRef = useRef<ProfileState>(DEFAULT_PROFILE);
   const likesRef = useRef<LikesState>(DEFAULT_LIKES);
   const commentsRef = useRef<CommentsState>(DEFAULT_COMMENTS);
+  const articlesRef = useRef<Article[]>([]);
 
   const toastId = useRef(0);
   const pushToast = useCallback((message: string) => {
@@ -119,10 +126,11 @@ export function MadarProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [rp, rl, rc] = await Promise.all([
+      const [rp, rl, rc, fetchedArticles] = await Promise.all([
         readKey(KEYS.profile),
         readKey(KEYS.likes),
         readKey(KEYS.comments),
+        fetchArticlesFromSupabase(),
       ]);
       if (cancelled) return;
       const p = sanitizeProfile(rp);
@@ -131,9 +139,20 @@ export function MadarProvider({ children }: { children: ReactNode }) {
       profileRef.current = p;
       likesRef.current = l;
       commentsRef.current = c;
+      articlesRef.current = fetchedArticles;
       setProfile(p);
       setLikes(l);
       setComments(c);
+      setArticles(fetchedArticles);
+      setArticleMap(
+        fetchedArticles.reduce(
+          (acc, a) => {
+            acc[a.id] = a;
+            return acc;
+          },
+          {} as Record<string, Article>,
+        ),
+      );
       setReady(true);
     })();
     return () => {
@@ -174,7 +193,7 @@ export function MadarProvider({ children }: { children: ReactNode }) {
 
   const likeCount = useCallback(
     (articleId: string) => {
-      const base = ARTICLE_MAP[articleId]?.baseLikes ?? 0;
+      const base = articlesRef.current.find((a) => a.id === articleId)?.baseLikes ?? 0;
       return base + (likes.liked.includes(articleId) ? 1 : 0);
     },
     [likes],
@@ -239,6 +258,8 @@ export function MadarProvider({ children }: { children: ReactNode }) {
     toggleLike,
     commentsFor,
     addComment,
+    articles,
+    articleMap,
   };
 
   return <MadarContext.Provider value={value}>{children}</MadarContext.Provider>;
