@@ -215,20 +215,13 @@ export function ArticleView({ articleId }: { articleId: string }) {
 
       {/* title alongside a sidebar image with per-article configurable dimensions */}
       <div className="flex flex-col gap-4 sm:flex-row-reverse sm:items-start">
-        <div
-          className="w-full shrink-0 overflow-hidden rounded-lg sm:w-auto"
-          style={{
-            maxWidth: "100%",
-            width: `${article.sideImageWidth}px`,
-          }}
-        >
+        <div className="w-full shrink-0 overflow-hidden rounded-lg sm:max-w-sm">
           {article.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={article.imageUrl}
               alt={article.title}
-              className="w-full object-cover"
-              style={{ aspectRatio: `${article.sideImageWidth} / ${article.sideImageHeight}` }}
+              className="h-auto w-full object-contain"
             />
           ) : (
             <ThumbArt
