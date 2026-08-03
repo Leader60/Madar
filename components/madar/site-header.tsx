@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useMadar } from "@/contexts/madar-context";
 import { TICKER_HEADLINES, type RouteName } from "@/lib/madar/data";
 import { cx } from "./ui";
+import { PaymentPrompt } from "./payment-prompt";
 import {
   IconMenu,
   IconClose,
@@ -60,6 +61,7 @@ function NewsTicker() {
 export function SiteHeader() {
   const { route, navigate } = useMadar();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [subscribeOpen, setSubscribeOpen] = useState(false);
 
   const go = (r: RouteName) => {
     navigate(r);
@@ -98,6 +100,12 @@ export function SiteHeader() {
                 {item.label}
               </button>
             ))}
+            <button
+              onClick={() => setSubscribeOpen(true)}
+              className="mr-1 rounded-md border border-gold px-3 py-1.5 text-sm font-bold text-gold transition-colors hover:bg-gold hover:text-accent-foreground"
+            >
+              اشتراك
+            </button>
           </nav>
 
           {/* centered platform name */}
@@ -151,9 +159,33 @@ export function SiteHeader() {
                 </button>
               );
             })}
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                setSubscribeOpen(true);
+              }}
+              className="flex w-full items-center gap-3 border-t border-gold/20 px-5 py-3 text-right text-sm font-bold text-gold transition-colors hover:bg-white/10"
+            >
+              <IconCheckSubstitute />
+              اشتراك
+            </button>
           </nav>
         )}
       </div>
+
+      <PaymentPrompt
+        isOpen={subscribeOpen}
+        onClose={() => setSubscribeOpen(false)}
+      />
     </header>
+  );
+}
+
+// أيقونة بسيطة بديلة (نجمة/علامة) للزر بقائمة الجوال، تفادياً لاستيراد أيقونة غير موجودة أصلاً بـ icons.tsx
+function IconCheckSubstitute() {
+  return (
+    <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 2l2.6 6.6L21 9.3l-5 4.6L17.5 21 12 17.3 6.5 21 8 13.9l-5-4.6 6.4-.7z" />
+    </svg>
   );
 }
