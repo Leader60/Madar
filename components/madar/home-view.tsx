@@ -1,7 +1,9 @@
 "use client";
+import { useState } from "react";
 import { useMadar } from "@/contexts/madar-context";
 import { formatDate, type Article } from "@/lib/madar/data";
 import { Card, ThumbArt, SectionTitle, Button } from "./ui";
+import { PaymentPrompt } from "./payment-prompt";
 import { IconChevronLeft, IconClock, IconUser } from "./icons";
 
 function ArticleThumb({
@@ -35,7 +37,6 @@ function FeaturedCard({ article }: { article: Article }) {
       onClick={() => navigate("article", article.id)}
       className="md-fade-up group overflow-hidden border border-navy/10 shadow-md transition-shadow duration-300 hover:shadow-xl"
     >
-      {/* الصورة + طبقة تدرج داكنة تحمل التصنيف والتاريخ فوقها مباشرة */}
       <div className="relative w-full overflow-hidden bg-navy">
         <ArticleThumb
           article={article}
@@ -114,6 +115,7 @@ function ArticleCard({ article }: { article: Article }) {
 
 export function HomeView() {
   const { articles, navigate } = useMadar();
+  const [subscribeOpen, setSubscribeOpen] = useState(false);
 
   const featured = articles.find((a) => a.isFeatured) ?? articles[0];
   const others = articles.filter((a) => a.id !== featured?.id);
@@ -132,7 +134,15 @@ export function HomeView() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-6">
-      <SectionTitle className="mb-4">الخبر الرئيسي</SectionTitle>
+      <div className="mb-4 flex items-center justify-between">
+        <SectionTitle>الخبر الرئيسي</SectionTitle>
+        <button
+          onClick={() => setSubscribeOpen(true)}
+          className="rounded-full border border-gold px-3.5 py-1.5 text-xs font-bold text-gold-deep transition-colors hover:bg-gold hover:text-accent-foreground"
+        >
+          اشتراك
+        </button>
+      </div>
       <FeaturedCard article={featured} />
 
       <div className="my-8 border-t border-navy/10" />
@@ -158,6 +168,11 @@ export function HomeView() {
           عرض جميع المقالات بالأرشيف
         </Button>
       )}
+
+      <PaymentPrompt
+        isOpen={subscribeOpen}
+        onClose={() => setSubscribeOpen(false)}
+      />
     </div>
   );
 }
