@@ -81,20 +81,24 @@ export function SiteHeader() {
 
           {/* desktop nav — بدون زر اشتراك هنا، تفادياً للتراكب مع اسم الموقع بالمنتصف */}
           <nav className="hidden items-center gap-1 md:flex">
-            {NAV.map((item) => (
-              <button
-                key={item.route}
-                onClick={() => go(item.route)}
-                className={cx(
-                  "rounded-md px-3 py-1.5 text-sm font-bold transition-colors",
-                  route === item.route
-                    ? "bg-gold text-accent-foreground"
-                    : "text-primary-foreground hover:bg-white/10",
-                )}
-              >
-                {item.label}
-              </button>
-            ))}
+            {NAV.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.route}
+                  onClick={() => go(item.route)}
+                  className={cx(
+                    "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-bold transition-colors",
+                    route === item.route
+                      ? "bg-gold text-accent-foreground"
+                      : "text-primary-foreground hover:bg-white/10",
+                  )}
+                >
+                  <Icon size={16} />
+                  {item.label}
+                </button>
+              );
+            })}
           </nav>
 
           {/* centered platform name */}
