@@ -18,7 +18,7 @@ export function PaymentButton({
   disabled = false,
   className = "",
   showLabel = true,
-  amount = 0.05,
+  amount = 1,
 }: PaymentButtonProps) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -30,7 +30,7 @@ export function PaymentButton({
         className={`px-6 py-3 rounded-lg bg-green-500 text-white font-semibold flex items-center gap-2 ${className}`}
       >
         <IconCheck size={20} />
-        {showLabel ? "تم الاشتراك" : ""}
+        {showLabel ? "تم الاشتراك لمدة سنة من تاريخه" : ""}
       </button>
     );
   }
