@@ -17,7 +17,7 @@ import {
 
 const NAV: { label: string; route: RouteName; icon: typeof IconHome }[] = [
   { label: "الرئيسية", route: "home", icon: IconHome },
-  { label: "أرشيف المقالات", route: "archive", icon: IconArticles },
+  { label: "أرشيف", route: "archive", icon: IconArticles },
   { label: "من نحن", route: "about", icon: IconInfo },
   { label: "اتصل بنا", route: "contact", icon: IconMail },
 ];
