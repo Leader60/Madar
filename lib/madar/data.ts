@@ -27,6 +27,7 @@ export interface Article {
   sideImageWidth: number; // px, configurable per article
   sideImageHeight: number; // px, configurable per article
   imageUrl?: string; // real photo, takes priority over generated art
+  videoUrl?: string; // optional video shown at the end of the article, before author block
   body: string[]; // paragraphs
   author: AuthorInfo;
   baseLikes: number;
