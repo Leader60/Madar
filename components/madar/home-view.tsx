@@ -135,7 +135,7 @@ export function HomeView() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-6">
       <div className="mb-4 flex items-center justify-between">
-        <SectionTitle>الخبر الرئيسي</SectionTitle>
+        <SectionTitle>المقال الرئيسي</SectionTitle>
         <button
           onClick={() => setSubscribeOpen(true)}
           className="rounded-full border border-gold px-3.5 py-1.5 text-xs font-bold text-gold-deep transition-colors hover:bg-gold hover:text-accent-foreground"
