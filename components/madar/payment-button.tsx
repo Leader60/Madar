@@ -53,7 +53,7 @@ export function PaymentButton({
         className={`px-6 py-3 rounded-lg bg-green-500 text-white font-semibold flex items-center gap-2 ${className}`}
       >
         <IconCheck size={20} />
-        {showLabel ? "تم الاشتراك" : ""}
+        {showLabel ? "تم الاشتراك لمدة سنة من تاريخه" : ""}
       </button>
     );
   }
@@ -86,7 +86,7 @@ export function PaymentButton({
     }
   };
 
-  const amount = product.price_in_pi?.toFixed(3) || "0.05";
+  const amount = product.price_in_pi?.toFixed(3) || "1";
 
   return (
     <button
@@ -101,7 +101,7 @@ export function PaymentButton({
         </>
       ) : (
         <>
-          {showLabel && `الاشتراك مقابل ${amount} Pi`}
+          {showLabel && `الاشتراك لمدة سنة مقابل ${amount} Pi`}
           {!showLabel && `${amount} Pi`}
         </>
       )}
