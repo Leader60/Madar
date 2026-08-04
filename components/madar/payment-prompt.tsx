@@ -27,7 +27,7 @@ export function PaymentPrompt({
 
   if (!isOpen) return null;
 
-  const amount = product?.price_in_pi?.toFixed(3) || "0.05";
+  const amount = product?.price_in_pi?.toFixed(3) || "1";
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
@@ -72,7 +72,7 @@ export function PaymentPrompt({
 
           {/* Price and Duration */}
           <div className="bg-gold/10 border border-gold/30 rounded-lg p-4 text-center">
-            <div className="text-sm text-gray-600 mb-1">سعر الاشتراك</div>
+            <div className="text-sm text-gray-600 mb-1">قيمة الاشتراك السنوي</div>
             <div className="text-3xl font-bold text-navy mb-1">{amount} Pi</div>
             <div className="text-sm text-gold font-semibold">
               اشتراك سنوي غير محدود
