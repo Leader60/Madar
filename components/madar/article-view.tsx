@@ -49,6 +49,19 @@ function AuthorBlock({ article }: { article: Article }) {
   );
 }
 
+function ArticleVideo({ videoUrl }: { videoUrl: string }) {
+  return (
+    <div className="mt-6 overflow-hidden rounded-lg bg-black">
+      <video
+        src={videoUrl}
+        controls
+        preload="metadata"
+        className="w-full rounded-lg"
+      />
+    </div>
+  );
+}
+
 function LikeBar({ articleId }: { articleId: string }) {
   const { isLiked, likeCount, toggleLike } = useMadar();
   const [disliked, setDisliked] = useState(false);
@@ -249,6 +262,8 @@ export function ArticleView({ articleId }: { articleId: string }) {
           ))}
         </article>
       </div>
+
+      {article.videoUrl && <ArticleVideo videoUrl={article.videoUrl} />}
 
       <AuthorBlock article={article} />
       <LikeBar articleId={articleId} />
