@@ -75,14 +75,22 @@ export function SiteHeader() {
         
         {/* الجزء العلوي: القائمة، اسم الموقع، واللوغو */}
         <div className="relative flex items-center justify-between px-4 py-2.5">
-          {/* menu button (mobile) */}
-          <button
-            onClick={() => setMenuOpen((v) => !v)}
-            className="rounded-md p-1.5 text-gold hover:bg-white/10 md:hidden"
-            aria-label="القائمة"
-          >
-            {menuOpen ? <IconClose size={22} /> : <IconMenu size={22} />}
-          </button>
+          {/* menu button (mobile) + subscribe button (mobile, always visible) */}
+          <div className="flex items-center gap-2 md:hidden">
+            <button
+              onClick={() => setMenuOpen((v) => !v)}
+              className="rounded-md p-1.5 text-gold hover:bg-white/10"
+              aria-label="القائمة"
+            >
+              {menuOpen ? <IconClose size={22} /> : <IconMenu size={22} />}
+            </button>
+            <button
+              onClick={() => setSubscribeOpen(true)}
+              className="rounded-full border border-gold px-2.5 py-1 text-xs font-bold text-gold transition-colors hover:bg-gold hover:text-accent-foreground"
+            >
+              اشتراك
+            </button>
+          </div>
 
           {/* desktop nav */}
           <nav className="hidden items-center gap-1 md:flex">
@@ -111,9 +119,9 @@ export function SiteHeader() {
           {/* centered platform name */}
           <button
             onClick={() => go("home")}
-            className="absolute left-1/2 -translate-x-1/2 text-2xl font-bold tracking-tight text-gold"
+            className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xl font-bold tracking-tight text-gold sm:text-2xl"
           >
-            مدار
+            مدار <span className="text-gold/60">-</span> Madar
           </button>
 
           {/* 2- اللوغو في جهة اليمين باستخدام Madar_logo.png */}
@@ -159,16 +167,6 @@ export function SiteHeader() {
                 </button>
               );
             })}
-            <button
-              onClick={() => {
-                setMenuOpen(false);
-                setSubscribeOpen(true);
-              }}
-              className="flex w-full items-center gap-3 border-t border-gold/20 px-5 py-3 text-right text-sm font-bold text-gold transition-colors hover:bg-white/10"
-            >
-              <IconCheckSubstitute />
-              اشتراك
-            </button>
           </nav>
         )}
       </div>
@@ -178,14 +176,5 @@ export function SiteHeader() {
         onClose={() => setSubscribeOpen(false)}
       />
     </header>
-  );
-}
-
-// أيقونة بسيطة بديلة (نجمة/علامة) للزر بقائمة الجوال، تفادياً لاستيراد أيقونة غير موجودة أصلاً بـ icons.tsx
-function IconCheckSubstitute() {
-  return (
-    <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 2l2.6 6.6L21 9.3l-5 4.6L17.5 21 12 17.3 6.5 21 8 13.9l-5-4.6 6.4-.7z" />
-    </svg>
   );
 }
