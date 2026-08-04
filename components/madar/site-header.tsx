@@ -25,9 +25,6 @@ const NAV: { label: string; route: RouteName; icon: typeof IconHome }[] = [
 function NewsTicker() {
   const { articles } = useMadar();
 
-  // الشريط يعرض عناوين المقالات الحقيقية من الموقع (Supabase) بدل نص ثابت.
-  // لو ما فيه مقالات بعد (مثلاً عند أول تحميل قبل وصول البيانات)، نستخدم
-  // القائمة الثابتة كخطة احتياطية بس عشان الشريط ما يطلع فاضي.
   const headlines =
     articles.length > 0 ? articles.map((a) => a.title) : [...TICKER_HEADLINES];
   const line = headlines.join("   •   ");
@@ -40,17 +37,10 @@ function NewsTicker() {
       </div>
       <div className="relative flex-1 overflow-hidden py-1.5">
         <div className="md-ticker-track px-4 text-sm">
-          {/* النسخة الأولى من النص */}
           <span>{line}</span>
-          <span className="px-4" aria-hidden="true">
-            •
-          </span>
-          {/* النسخة الثانية من النص (تكرار كامل لضمان استمرار الحلقة) */}
+          <span className="px-4" aria-hidden="true">•</span>
           <span aria-hidden="true">{line}</span>
-          <span className="px-4" aria-hidden="true">
-            •
-          </span>
-          {/* النسخة الثالثة للتأكيد على عدم انقطاع النص أبدًا في الشاشات العريضة */}
+          <span className="px-4" aria-hidden="true">•</span>
           <span aria-hidden="true">{line}</span>
         </div>
       </div>
@@ -70,12 +60,9 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-30 shadow-md">
-      {/* 1- تجميع الهيدر والشريط المتحرك داخل حاوية واحدة محددة العرض (max-w-3xl) */}
       <div className="w-full overflow-hidden bg-navy text-primary-foreground shadow-lg">
-        
-        {/* الجزء العلوي: القائمة، اسم الموقع، واللوغو */}
         <div className="relative flex items-center justify-between px-4 py-2.5">
-          {/* menu button (mobile) + subscribe button (mobile, always visible) */}
+          {/* menu button (mobile) + subscribe button (mobile only, always visible) */}
           <div className="flex items-center gap-2 md:hidden">
             <button
               onClick={() => setMenuOpen((v) => !v)}
@@ -92,7 +79,7 @@ export function SiteHeader() {
             </button>
           </div>
 
-          {/* desktop nav */}
+          {/* desktop nav — بدون زر اشتراك هنا، تفادياً للتراكب مع اسم الموقع بالمنتصف */}
           <nav className="hidden items-center gap-1 md:flex">
             {NAV.map((item) => (
               <button
@@ -108,12 +95,6 @@ export function SiteHeader() {
                 {item.label}
               </button>
             ))}
-            <button
-              onClick={() => setSubscribeOpen(true)}
-              className="mr-1 rounded-md border border-gold px-3 py-1.5 text-sm font-bold text-gold transition-colors hover:bg-gold hover:text-accent-foreground"
-            >
-              اشتراك
-            </button>
           </nav>
 
           {/* centered platform name */}
@@ -124,7 +105,7 @@ export function SiteHeader() {
             مدار <span className="text-gold/60">-</span> Madar
           </button>
 
-          {/* 2- اللوغو في جهة اليمين باستخدام Madar_logo.png */}
+          {/* اللوغو */}
           <button
             onClick={() => go("home")}
             className="flex items-center gap-2 text-gold"
@@ -143,10 +124,8 @@ export function SiteHeader() {
           </button>
         </div>
 
-        {/* الشريط المتحرك (بنفس عرض الهيدر تمامًا) */}
         <NewsTicker />
 
-        {/* mobile dropdown menu */}
         {menuOpen && (
           <nav className="md-fade-in border-t border-gold/20 bg-navy text-primary-foreground md:hidden">
             {NAV.map((item) => {
