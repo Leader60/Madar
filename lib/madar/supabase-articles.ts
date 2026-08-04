@@ -12,6 +12,7 @@ type ArticleRow = {
   summary: string;
   content: string;
   image_url: string | null;
+  video_url: string | null;
   category: string;
   is_featured: boolean;
   slug: string;
@@ -32,6 +33,7 @@ function rowToArticle(row: ArticleRow): Article {
     sideImageWidth: 320,
     sideImageHeight: 200,
     imageUrl: row.image_url || undefined,
+    videoUrl: row.video_url || undefined,
     body: row.content.split(/\n\s*\n/).filter(Boolean),
     author: {
       name: row.author_name || "فريق مدار",
@@ -52,5 +54,6 @@ export async function fetchArticlesFromSupabase(): Promise<Article[]> {
     console.error("Error fetching articles:", error);
     return [];
   }
+
   return data.map(rowToArticle);
 }
