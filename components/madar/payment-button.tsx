@@ -1,8 +1,6 @@
 "use client";
-
 import { useState } from "react";
-import { usePiAuth } from "@/contexts/pi-auth-context";
-import { PRODUCT_CONFIG } from "@/lib/product-config";
+import { subscribeToMadar } from "@/lib/madar/pi-payment";
 import { IconCheck } from "./icons";
 
 interface PaymentButtonProps {
@@ -11,6 +9,7 @@ interface PaymentButtonProps {
   disabled?: boolean;
   className?: string;
   showLabel?: boolean;
+  amount?: number;
 }
 
 export function PaymentButton({
@@ -19,74 +18,38 @@ export function PaymentButton({
   disabled = false,
   className = "",
   showLabel = true,
+  amount = 0.05,
 }: PaymentButtonProps) {
-  const { sdk, products, restoredPurchases } = usePiAuth();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // Find the product from the products array
-  const product = products?.find(
-    (p) => p.id === PRODUCT_CONFIG.PRODUCT_6a52cc8c0533b18091489818
-  );
-
-  if (!product) {
-    return (
-      <button
-        disabled
-        className={`px-6 py-3 rounded-lg bg-gray-300 text-gray-600 font-semibold cursor-not-allowed ${className}`}
-      >
-        المنتج غير متاح
-      </button>
-    );
-  }
-
-  // Check if user has already purchased
-  const hasPurchased =
-    restoredPurchases?.purchases?.some(
-      (p) => p.productId === product.slug
-    ) ?? false;
-
-  if (hasPurchased && success) {
+  if (success) {
     return (
       <button
         disabled
         className={`px-6 py-3 rounded-lg bg-green-500 text-white font-semibold flex items-center gap-2 ${className}`}
       >
         <IconCheck size={20} />
-        {showLabel ? "تم الاشتراك لمدة سنة من تاريخه" : ""}
+        {showLabel ? "تم الاشتراك" : ""}
       </button>
     );
   }
 
   const handlePayment = async () => {
-    if (!sdk || loading) return;
-
+    if (loading) return;
     setLoading(true);
     try {
-      const result = await sdk.makePurchase(product.slug);
-
+      const result = await subscribeToMadar(amount);
       if (result.ok) {
         setSuccess(true);
         onSuccess?.();
       } else {
-        const errorMessage =
-          result.error?.code === "purchase_cancelled"
-            ? "تم إلغاء عملية الشراء"
-            : result.error?.code === "product_not_found"
-              ? "المنتج غير موجود"
-              : "حدث خطأ في عملية الدفع";
-        onError?.(errorMessage);
+        onError?.(result.error || "حدث خطأ في عملية الدفع");
       }
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "حدث خطأ في عملية الدفع";
-      onError?.(errorMessage);
     } finally {
       setLoading(false);
     }
   };
-
-  const amount = product.price_in_pi?.toFixed(3) || "1";
 
   return (
     <button
@@ -101,8 +64,8 @@ export function PaymentButton({
         </>
       ) : (
         <>
-          {showLabel && `الاشتراك لمدة سنة مقابل ${amount} Pi`}
-          {!showLabel && `${amount} Pi`}
+          {showLabel && `الاشتراك مقابل ${amount.toFixed(3)} Pi`}
+          {!showLabel && `${amount.toFixed(3)} Pi`}
         </>
       )}
     </button>
