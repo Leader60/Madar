@@ -1,9 +1,7 @@
 "use client";
-import { useState } from "react";
 import { useMadar } from "@/contexts/madar-context";
 import { formatDate, type Article } from "@/lib/madar/data";
-import { Card, ThumbArt, SectionTitle, Button } from "./ui";
-import { PaymentPrompt } from "./payment-prompt";
+import { Card, ThumbArt, SectionTitle, Pill, Button } from "./ui";
 import { IconChevronLeft, IconClock, IconUser } from "./icons";
 
 function ArticleThumb({
@@ -35,40 +33,30 @@ function FeaturedCard({ article }: { article: Article }) {
   return (
     <Card
       onClick={() => navigate("article", article.id)}
-      className="md-fade-up group overflow-hidden border border-navy/10 shadow-md transition-shadow duration-300 hover:shadow-xl"
+      className="md-fade-up overflow-hidden"
     >
-      <div className="relative w-full overflow-hidden bg-navy">
+      <div className="w-full bg-secondary">
         <ArticleThumb
           article={article}
-          className="max-h-80 w-full transition-transform duration-500 group-hover:scale-[1.03]"
+          className="max-h-72 w-full"
           fit="contain"
         />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-navy/80 via-navy/10 to-transparent"
-        />
-        <div className="absolute inset-x-4 bottom-3 flex items-center gap-2">
-          <span className="rounded-full bg-gold px-3 py-1 text-xs font-bold text-navy shadow-sm">
-            {article.category}
-          </span>
-          <span className="flex items-center gap-1 rounded-full bg-black/30 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
-            <IconClock size={12} />
+      </div>
+      <div className="p-4">
+        <div className="mb-2 flex items-center gap-2">
+          <Pill>{article.category}</Pill>
+          <span className="flex items-center gap-1 text-xs text-muted-foreground">
+            <IconClock size={13} />
             {formatDate(article.publishedAt)}
           </span>
         </div>
-      </div>
-
-      <div className="p-5">
-        <h2 className="mb-2.5 text-xl font-bold leading-snug tracking-tight text-navy text-balance">
+        <h2 className="mb-2 text-xl font-bold leading-snug text-navy text-balance">
           {article.title}
         </h2>
-        <p className="md-clamp-3 mb-4 text-sm leading-relaxed text-foreground/70">
+        <p className="md-clamp-3 text-sm leading-relaxed text-foreground/80">
           {article.excerpt}
         </p>
-        <Button
-          variant="gold"
-          className="w-full shadow-sm transition-transform duration-200 group-hover:translate-x-0"
-        >
+        <Button variant="gold" className="mt-3 w-full">
           اقرأ المقال كاملًا
           <IconChevronLeft size={16} />
         </Button>
@@ -82,27 +70,23 @@ function ArticleCard({ article }: { article: Article }) {
   return (
     <Card
       onClick={() => navigate("article", article.id)}
-      className="md-fade-up group flex gap-4 overflow-hidden border border-navy/8 p-3 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gold/40 hover:shadow-md"
+      className="md-fade-up flex gap-3 overflow-hidden p-3"
     >
-      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg ring-1 ring-navy/10">
-        <ArticleThumb
-          article={article}
-          className="h-20 w-20 shrink-0 transition-transform duration-300 group-hover:scale-105"
-        />
-      </div>
+      <ArticleThumb
+        article={article}
+        className="h-20 w-20 shrink-0 rounded-md"
+      />
       <div className="min-w-0 flex-1">
-        <div className="mb-1.5 flex items-center gap-2 text-[11px]">
-          <span className="rounded-full bg-navy/8 px-2 py-0.5 font-bold text-navy">
-            {article.category}
-          </span>
+        <div className="mb-1 flex items-center gap-2">
+          <Pill className="px-2 py-0.5 text-[10px]">{article.category}</Pill>
           {article.author?.name && (
-            <span className="flex items-center gap-1 text-muted-foreground">
+            <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
               <IconUser size={11} />
               {article.author.name}
             </span>
           )}
         </div>
-        <h3 className="md-clamp-2 mb-1 text-sm font-bold leading-snug text-navy transition-colors group-hover:text-gold-deep">
+        <h3 className="md-clamp-2 mb-1 text-sm font-bold leading-snug text-navy">
           {article.title}
         </h3>
         <p className="md-clamp-2 text-xs leading-relaxed text-muted-foreground">
@@ -115,14 +99,10 @@ function ArticleCard({ article }: { article: Article }) {
 
 export function HomeView() {
   const { articles, navigate } = useMadar();
-  const [subscribeOpen, setSubscribeOpen] = useState(false);
-
-  const featured = articles.find((a) => a.isFeatured) ?? articles[0];
-  const others = articles.filter((a) => a.id !== featured?.id);
-
-  const MAX_RECENT = 8;
-  const rest = others.slice(0, MAX_RECENT);
-  const hasMore = others.length > MAX_RECENT;
+  const featured = articles[0];
+  const MAX_RECENT = 4;
+  const rest = articles.slice(1, 1 + MAX_RECENT);
+  const hasMore = articles.length > 1 + MAX_RECENT;
 
   if (!featured) {
     return (
@@ -133,21 +113,10 @@ export function HomeView() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-6">
-      <div className="mb-4 flex items-center justify-between">
-        <SectionTitle>المقال الرئيسي</SectionTitle>
-        <button
-          onClick={() => setSubscribeOpen(true)}
-          className="rounded-full border border-gold px-3.5 py-1.5 text-xs font-bold text-gold-deep transition-colors hover:bg-gold hover:text-accent-foreground"
-        >
-          اشتراك
-        </button>
-      </div>
+    <div className="mx-auto max-w-3xl px-4 py-5">
+      <SectionTitle className="mb-3">الخبر الرئيسي</SectionTitle>
       <FeaturedCard article={featured} />
-
-      <div className="my-8 border-t border-navy/10" />
-
-      <SectionTitle className="mb-4">أحدث المقالات</SectionTitle>
+      <SectionTitle className="mb-3 mt-8">أحدث المقالات</SectionTitle>
       {rest.length > 0 ? (
         <div className="flex flex-col gap-3">
           {rest.map((a) => (
@@ -162,17 +131,12 @@ export function HomeView() {
       {hasMore && (
         <Button
           variant="gold"
-          className="mt-5 w-full shadow-sm"
+          className="mt-4 w-full"
           onClick={() => navigate("archive")}
         >
           عرض جميع المقالات بالأرشيف
         </Button>
       )}
-
-      <PaymentPrompt
-        isOpen={subscribeOpen}
-        onClose={() => setSubscribeOpen(false)}
-      />
     </div>
   );
 }
