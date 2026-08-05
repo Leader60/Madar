@@ -1,10 +1,14 @@
 "use client";
 import { useState } from "react";
 import { useMadar } from "@/contexts/madar-context";
+import { usePiAuth } from "@/contexts/pi-auth-context";
+import { PRODUCT_CONFIG } from "@/lib/product-config";
 import { formatDate, type Article } from "@/lib/madar/data";
 import { Card, ThumbArt, SectionTitle, Pill, Button } from "./ui";
 import { IconChevronLeft, IconClock, IconUser } from "./icons";
 import { PaymentPrompt } from "./payment-prompt";
+
+const SUBSCRIPTION_PRODUCT_ID = PRODUCT_CONFIG.PRODUCT_6a52cc8c0533b18091489818;
 
 function ArticleThumb({
   article,
@@ -99,13 +103,42 @@ function ArticleCard({ article }: { article: Article }) {
   );
 }
 
+function LockedRecentSection({
+  onSubscribeClick,
+}: {
+  onSubscribeClick: () => void;
+}) {
+  return (
+    <Card className="flex flex-col items-center gap-3 p-6 text-center">
+      <p className="text-sm font-bold text-navy">
+        باقي المقالات متاحة للمشتركين فقط
+      </p>
+      <p className="text-xs text-muted-foreground">
+        اشترك الآن للوصول الكامل لجميع المقالات والتحديثات
+      </p>
+      <Button variant="gold" onClick={onSubscribeClick} className="mt-1">
+        اشترك الآن
+      </Button>
+    </Card>
+  );
+}
+
 export function HomeView() {
   const { articles, navigate } = useMadar();
+  const { sdk, restoredPurchases } = usePiAuth();
   const [subscribeOpen, setSubscribeOpen] = useState(false);
+
   const featured = articles[0];
   const MAX_RECENT = 4;
   const rest = articles.slice(1, 1 + MAX_RECENT);
   const hasMore = articles.length > 1 + MAX_RECENT;
+
+  const isPiUser = sdk !== null;
+  const isSubscribed =
+    restoredPurchases?.some(
+      (p) => p.productId === SUBSCRIPTION_PRODUCT_ID && p.quantity > 0,
+    ) ?? false;
+  const isLocked = isPiUser && restoredPurchases !== null && !isSubscribed;
 
   if (!featured) {
     return (
@@ -127,8 +160,12 @@ export function HomeView() {
         </button>
       </div>
       <FeaturedCard article={featured} />
+
       <SectionTitle className="mb-3 mt-8">أحدث المقالات</SectionTitle>
-      {rest.length > 0 ? (
+
+      {isLocked ? (
+        <LockedRecentSection onSubscribeClick={() => setSubscribeOpen(true)} />
+      ) : rest.length > 0 ? (
         <div className="flex flex-col gap-3">
           {rest.map((a) => (
             <ArticleCard key={a.id} article={a} />
@@ -139,7 +176,8 @@ export function HomeView() {
           لا توجد مقالات إضافية بعد
         </p>
       )}
-      {hasMore && (
+
+      {!isLocked && hasMore && (
         <Button
           variant="gold"
           className="mt-4 w-full"
