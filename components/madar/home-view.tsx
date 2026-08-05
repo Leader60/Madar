@@ -114,7 +114,7 @@ export function HomeView() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-5">
-      <SectionTitle className="mb-3">الخبر الرئيسي</SectionTitle>
+      <SectionTitle className="mb-3">المقال الرئيسـي</SectionTitle>
       <FeaturedCard article={featured} />
       <SectionTitle className="mb-3 mt-8">أحدث المقالات</SectionTitle>
       {rest.length > 0 ? (
