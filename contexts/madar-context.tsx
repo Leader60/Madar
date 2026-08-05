@@ -20,16 +20,18 @@ import {
   type CommentsState,
   type Article,
   DEFAULT_PROFILE,
-  DEFAULT_LIKES,
-  DEFAULT_COMMENTS,
   sanitizeProfile,
-  sanitizeLikes,
-  sanitizeComments,
   profileToBlob,
-  likesToBlob,
-  commentsToBlob,
 } from "@/lib/madar/data";
 import { fetchArticlesFromSupabase } from "@/lib/madar/supabase-articles";
+import {
+  fetchLikedArticleIds,
+  fetchLikeCounts,
+  addLike,
+  removeLike,
+  fetchComments,
+  addCommentToSupabase,
+} from "@/lib/madar/interactions";
 
 const memStore = new Map<string, Record<string, unknown>>();
 
@@ -63,16 +65,15 @@ export function MadarProvider({ children }: { children: ReactNode }) {
   const [currentArticleId, setCurrentArticleId] = useState<string | null>(null);
 
   const [profile, setProfile] = useState<ProfileState>(DEFAULT_PROFILE);
-  const [likes, setLikes] = useState<LikesState>(DEFAULT_LIKES);
-  const [comments, setComments] = useState<CommentsState>(DEFAULT_COMMENTS);
+  const [likedIds, setLikedIds] = useState<string[]>([]);
+  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
+  const [comments, setComments] = useState<CommentsState>({ items: [] });
 
   const [articles, setArticles] = useState<Article[]>([]);
   const [articleMap, setArticleMap] = useState<Record<string, Article>>({});
 
   const profileRef = useRef<ProfileState>(DEFAULT_PROFILE);
-  const likesRef = useRef<LikesState>(DEFAULT_LIKES);
-  const commentsRef = useRef<CommentsState>(DEFAULT_COMMENTS);
-  const articlesRef = useRef<Article[]>([]);
+  const likedIdsRef = useRef<string[]>([]);
 
   const toastId = useRef(0);
   const pushToast = useCallback((message: string) => {
@@ -91,7 +92,6 @@ export function MadarProvider({ children }: { children: ReactNode }) {
   );
 
   const timers = useRef<Record<string, ReturnType<typeof setTimeout> | null>>({});
-  const backoff = useRef<Record<string, number>>({});
   const pending = useRef<Record<string, Record<string, unknown>>>({});
 
   const writeNow = useCallback(
@@ -126,23 +126,31 @@ export function MadarProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [rp, rl, rc, fetchedArticles] = await Promise.all([
+      const [rp, fetchedArticles, liked, counts, allComments] = await Promise.all([
         readKey(KEYS.profile),
-        readKey(KEYS.likes),
-        readKey(KEYS.comments),
         fetchArticlesFromSupabase(),
+        fetchLikedArticleIds(),
+        fetchLikeCounts(),
+        fetchComments(),
       ]);
       if (cancelled) return;
+
       const p = sanitizeProfile(rp);
-      const l = sanitizeLikes(rl, fetchedArticles);
-      const c = sanitizeComments(rc, fetchedArticles);
       profileRef.current = p;
-      likesRef.current = l;
-      commentsRef.current = c;
-      articlesRef.current = fetchedArticles;
+      likedIdsRef.current = liked;
+
       setProfile(p);
-      setLikes(l);
-      setComments(c);
+      setLikedIds(liked);
+      setLikeCounts(counts);
+      setComments({
+        items: allComments.map((c) => ({
+          id: String(c.id),
+          articleId: c.article_id,
+          name: c.name,
+          text: c.text,
+          createdAt: new Date(c.created_at).getTime(),
+        })),
+      });
       setArticles(fetchedArticles);
       setArticleMap(
         fetchedArticles.reduce(
@@ -187,30 +195,41 @@ export function MadarProvider({ children }: { children: ReactNode }) {
   );
 
   const isLiked = useCallback(
-    (articleId: string) => likes.liked.includes(articleId),
-    [likes],
+    (articleId: string) => likedIds.includes(articleId),
+    [likedIds],
   );
 
   const likeCount = useCallback(
     (articleId: string) => {
-      const base = articlesRef.current.find((a) => a.id === articleId)?.baseLikes ?? 0;
-      return base + (likes.liked.includes(articleId) ? 1 : 0);
+      const base = articles.find((a) => a.id === articleId)?.baseLikes ?? 0;
+      return base + (likeCounts[articleId] ?? 0);
     },
-    [likes],
+    [articles, likeCounts],
   );
 
   const toggleLike = useCallback(
     (articleId: string) => {
-      const has = likesRef.current.liked.includes(articleId);
-      const liked = has
-        ? likesRef.current.liked.filter((x) => x !== articleId)
-        : [...likesRef.current.liked, articleId];
-      const next: LikesState = { liked };
-      likesRef.current = next;
-      setLikes(next);
-      scheduleSave(KEYS.likes, likesToBlob(next));
+      const has = likedIdsRef.current.includes(articleId);
+
+      // تحديث فوري في الواجهة (optimistic update)
+      const nextLiked = has
+        ? likedIdsRef.current.filter((x) => x !== articleId)
+        : [...likedIdsRef.current, articleId];
+      likedIdsRef.current = nextLiked;
+      setLikedIds(nextLiked);
+      setLikeCounts((prev) => ({
+        ...prev,
+        [articleId]: Math.max(0, (prev[articleId] ?? 0) + (has ? -1 : 1)),
+      }));
+
+      // تنفيذ فعلي في Supabase بالخلفية
+      if (has) {
+        void removeLike(articleId);
+      } else {
+        void addLike(articleId);
+      }
     },
-    [scheduleSave],
+    [],
   );
 
   const commentsFor = useCallback(
@@ -225,22 +244,23 @@ export function MadarProvider({ children }: { children: ReactNode }) {
     (articleId: string, name: string, text: string) => {
       const cleanText = text.trim().slice(0, 500);
       if (!cleanText) return;
-      const comment: Comment = {
+      const cleanName = name.trim().slice(0, 40) || "زائر";
+
+      // تحديث فوري في الواجهة (optimistic update)
+      const tempComment: Comment = {
         id: uid(),
         articleId,
-        name: name.trim().slice(0, 40) || "زائر",
+        name: cleanName,
         text: cleanText,
         createdAt: Date.now(),
       };
-      const next: CommentsState = {
-        items: [...commentsRef.current.items, comment],
-      };
-      commentsRef.current = next;
-      setComments(next);
-      scheduleSave(KEYS.comments, commentsToBlob(next));
+      setComments((prev) => ({ items: [...prev.items, tempComment] }));
       pushToast("تم نشر تعليقك");
+
+      // حفظ فعلي في Supabase بالخلفية
+      void addCommentToSupabase(articleId, cleanName, cleanText);
     },
-    [scheduleSave, pushToast],
+    [pushToast],
   );
 
   const value: MadarContextValue = {
