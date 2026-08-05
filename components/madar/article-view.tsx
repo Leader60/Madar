@@ -3,6 +3,8 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useMadar } from "@/contexts/madar-context";
+import { usePiAuth } from "@/contexts/pi-auth-context";
+import { PRODUCT_CONFIG } from "@/lib/product-config";
 import {
   formatDate,
   timeAgo,
@@ -18,6 +20,9 @@ import {
   IconUser,
   IconClock,
 } from "./icons";
+import { PaymentPrompt } from "./payment-prompt";
+
+const SUBSCRIPTION_PRODUCT_ID = PRODUCT_CONFIG.PRODUCT_6a52cc8c0533b18091489818;
 
 function AuthorBlock({ article }: { article: Article }) {
   return (
@@ -202,8 +207,30 @@ function CommentSection({ articleId }: { articleId: string }) {
   );
 }
 
+function LockedArticleNotice({
+  onSubscribeClick,
+}: {
+  onSubscribeClick: () => void;
+}) {
+  return (
+    <Card className="mt-2 flex flex-col items-center gap-3 p-8 text-center">
+      <p className="text-base font-bold text-navy">
+        هذا المقال متاح للمشتركين فقط
+      </p>
+      <p className="text-sm text-muted-foreground">
+        اشترك الآن للوصول الكامل لهذا المقال وجميع المقالات الأخرى
+      </p>
+      <Button variant="gold" onClick={onSubscribeClick} className="mt-2">
+        اشترك الآن
+      </Button>
+    </Card>
+  );
+}
+
 export function ArticleView({ articleId }: { articleId: string }) {
-  const { navigate, articleMap } = useMadar();
+  const { navigate, articleMap, articles } = useMadar();
+  const { sdk, restoredPurchases } = usePiAuth();
+  const [subscribeOpen, setSubscribeOpen] = useState(false);
   const article = articleMap[articleId];
 
   if (!article) {
@@ -216,6 +243,18 @@ export function ArticleView({ articleId }: { articleId: string }) {
       </div>
     );
   }
+
+  const featured = articles[0];
+  const isPiUser = sdk !== null;
+  const isSubscribed =
+    restoredPurchases?.some(
+      (p) => p.productId === SUBSCRIPTION_PRODUCT_ID && p.quantity > 0,
+    ) ?? false;
+  const isLocked =
+    isPiUser &&
+    restoredPurchases !== null &&
+    !isSubscribed &&
+    article.id !== featured?.id;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-5">
@@ -238,36 +277,47 @@ export function ArticleView({ articleId }: { articleId: string }) {
         {article.title}
       </h1>
 
-      <div className="mt-2 overflow-hidden">
-       <div className="mb-4 w-full overflow-hidden rounded-lg sm:float-left sm:mb-2 sm:ml-0 sm:mr-6 sm:w-1/2">
-          {article.imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={article.imageUrl}
-              alt={article.title}
-              className="h-auto w-full object-contain"
-            />
-          ) : (
-            <ThumbArt
-              hue={article.thumbHue}
-              className="w-full"
-              style={{ aspectRatio: `${article.sideImageWidth} / ${article.sideImageHeight}` }}
-            />
-          )}
-        </div>
+      {isLocked ? (
+        <LockedArticleNotice onSubscribeClick={() => setSubscribeOpen(true)} />
+      ) : (
+        <>
+          <div className="mt-2 overflow-hidden">
+            <div className="mb-4 w-full overflow-hidden rounded-lg sm:float-left sm:mb-2 sm:ml-0 sm:mr-6 sm:w-1/2">
+              {article.imageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={article.imageUrl}
+                  alt={article.title}
+                  className="h-auto w-full object-contain"
+                />
+              ) : (
+                <ThumbArt
+                  hue={article.thumbHue}
+                  className="w-full"
+                  style={{ aspectRatio: `${article.sideImageWidth} / ${article.sideImageHeight}` }}
+                />
+              )}
+            </div>
 
-        <article className="md-article-body space-y-4 text-justify text-[15px] leading-loose text-foreground/90">
-          {article.body.map((p, i) => (
-            <ReactMarkdown key={i}>{p}</ReactMarkdown>
-          ))}
-        </article>
-      </div>
+            <article className="md-article-body space-y-4 text-justify text-[15px] leading-loose text-foreground/90">
+              {article.body.map((p, i) => (
+                <ReactMarkdown key={i}>{p}</ReactMarkdown>
+              ))}
+            </article>
+          </div>
 
-      {article.videoUrl && <ArticleVideo videoUrl={article.videoUrl} />}
+          {article.videoUrl && <ArticleVideo videoUrl={article.videoUrl} />}
 
-      <AuthorBlock article={article} />
-      <LikeBar articleId={articleId} />
-      <CommentSection articleId={articleId} />
+          <AuthorBlock article={article} />
+          <LikeBar articleId={articleId} />
+          <CommentSection articleId={articleId} />
+        </>
+      )}
+
+      <PaymentPrompt
+        isOpen={subscribeOpen}
+        onClose={() => setSubscribeOpen(false)}
+      />
     </div>
   );
 }
