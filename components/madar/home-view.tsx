@@ -1,8 +1,10 @@
 "use client";
+import { useState } from "react";
 import { useMadar } from "@/contexts/madar-context";
 import { formatDate, type Article } from "@/lib/madar/data";
 import { Card, ThumbArt, SectionTitle, Pill, Button } from "./ui";
 import { IconChevronLeft, IconClock, IconUser } from "./icons";
+import { PaymentPrompt } from "./payment-prompt";
 
 function ArticleThumb({
   article,
@@ -99,6 +101,7 @@ function ArticleCard({ article }: { article: Article }) {
 
 export function HomeView() {
   const { articles, navigate } = useMadar();
+  const [subscribeOpen, setSubscribeOpen] = useState(false);
   const featured = articles[0];
   const MAX_RECENT = 4;
   const rest = articles.slice(1, 1 + MAX_RECENT);
@@ -114,7 +117,15 @@ export function HomeView() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-5">
-      <SectionTitle className="mb-3">المقال الرئيسـي</SectionTitle>
+      <div className="mb-3 flex items-center justify-between">
+        <SectionTitle>المقال الرئيسـي</SectionTitle>
+        <button
+          onClick={() => setSubscribeOpen(true)}
+          className="rounded-full border border-gold px-3 py-1 text-xs font-bold text-gold-deep transition-colors hover:bg-gold hover:text-accent-foreground"
+        >
+          اشتراك
+        </button>
+      </div>
       <FeaturedCard article={featured} />
       <SectionTitle className="mb-3 mt-8">أحدث المقالات</SectionTitle>
       {rest.length > 0 ? (
@@ -137,6 +148,11 @@ export function HomeView() {
           عرض جميع المقالات بالأرشيف
         </Button>
       )}
+
+      <PaymentPrompt
+        isOpen={subscribeOpen}
+        onClose={() => setSubscribeOpen(false)}
+      />
     </div>
   );
 }
