@@ -35,6 +35,11 @@ import {
 
 const memStore = new Map<string, Record<string, unknown>>();
 
+function parseArticleIdFromPath(pathname: string): string | null {
+  const match = pathname.match(/^\/article\/([^/]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 interface MadarContextValue {
   ready: boolean;
   storageNotice: boolean;
@@ -61,8 +66,14 @@ export function MadarProvider({ children }: { children: ReactNode }) {
   const [storageNotice, setStorageNotice] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const [route, setRoute] = useState<RouteName>("home");
-  const [currentArticleId, setCurrentArticleId] = useState<string | null>(null);
+  const [route, setRoute] = useState<RouteName>(() => {
+    if (typeof window === "undefined") return "home";
+    return parseArticleIdFromPath(window.location.pathname) ? "article" : "home";
+  });
+  const [currentArticleId, setCurrentArticleId] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return parseArticleIdFromPath(window.location.pathname);
+  });
 
   const [profile, setProfile] = useState<ProfileState>(DEFAULT_PROFILE);
   const [likedIds, setLikedIds] = useState<string[]>([]);
@@ -178,10 +189,35 @@ export function MadarProvider({ children }: { children: ReactNode }) {
     };
   }, [flushAll]);
 
+  // مزامنة الحالة مع أزرار "رجوع/تقدم" في المتصفح
+  useEffect(() => {
+    const onPopState = () => {
+      const id = parseArticleIdFromPath(window.location.pathname);
+      if (id) {
+        setRoute("article");
+        setCurrentArticleId(id);
+      } else {
+        setRoute("home");
+        setCurrentArticleId(null);
+      }
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
   const navigate = useCallback((r: RouteName, articleId?: string) => {
     setRoute(r);
     setCurrentArticleId(articleId ?? null);
-    if (typeof window !== "undefined") window.scrollTo({ top: 0 });
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0 });
+      const path =
+        r === "article" && articleId
+          ? `/article/${encodeURIComponent(articleId)}`
+          : "/";
+      if (window.location.pathname !== path) {
+        window.history.pushState(null, "", path);
+      }
+    }
   }, []);
 
   const saveDisplayName = useCallback(
@@ -211,7 +247,6 @@ export function MadarProvider({ children }: { children: ReactNode }) {
     (articleId: string) => {
       const has = likedIdsRef.current.includes(articleId);
 
-      // تحديث فوري في الواجهة (optimistic update)
       const nextLiked = has
         ? likedIdsRef.current.filter((x) => x !== articleId)
         : [...likedIdsRef.current, articleId];
@@ -222,7 +257,6 @@ export function MadarProvider({ children }: { children: ReactNode }) {
         [articleId]: Math.max(0, (prev[articleId] ?? 0) + (has ? -1 : 1)),
       }));
 
-      // تنفيذ فعلي في Supabase بالخلفية
       if (has) {
         void removeLike(articleId);
       } else {
@@ -246,7 +280,6 @@ export function MadarProvider({ children }: { children: ReactNode }) {
       if (!cleanText) return;
       const cleanName = name.trim().slice(0, 40) || "زائر";
 
-      // تحديث فوري في الواجهة (optimistic update)
       const tempComment: Comment = {
         id: uid(),
         articleId,
@@ -257,7 +290,6 @@ export function MadarProvider({ children }: { children: ReactNode }) {
       setComments((prev) => ({ items: [...prev.items, tempComment] }));
       pushToast("تم نشر تعليقك");
 
-      // حفظ فعلي في Supabase بالخلفية
       void addCommentToSupabase(articleId, cleanName, cleanText);
     },
     [pushToast],
