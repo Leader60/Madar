@@ -24,6 +24,65 @@ import { PaymentPrompt } from "./payment-prompt";
 
 const SUBSCRIPTION_PRODUCT_ID = PRODUCT_CONFIG.PRODUCT_6a52cc8c0533b18091489818;
 
+function ShareIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="18" cy="5" r="3" />
+      <circle cx="6" cy="12" r="3" />
+      <circle cx="18" cy="19" r="3" />
+      <line x1="8.6" y1="10.5" x2="15.4" y2="6.5" />
+      <line x1="8.6" y1="13.5" x2="15.4" y2="17.5" />
+    </svg>
+  );
+}
+
+function ShareButton({ article }: { article: Article }) {
+  const { pushToast } = useMadar();
+
+  const handleShare = async () => {
+    const url = `${window.location.origin}/article/${encodeURIComponent(article.id)}`;
+
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({
+          title: article.title,
+          text: article.excerpt,
+          url,
+        });
+      } catch {
+        // المستخدم ألغى المشاركة، لا داعي لأي إجراء
+      }
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
+      pushToast("تم نسخ رابط المقال");
+    } catch {
+      pushToast("تعذّر نسخ الرابط");
+    }
+  };
+
+  return (
+    <button
+      onClick={handleShare}
+      className="flex items-center gap-2 rounded-full border border-navy/25 px-4 py-2 text-sm font-bold text-navy transition-colors hover:bg-secondary"
+    >
+      <ShareIcon size={18} />
+      مشاركة
+    </button>
+  );
+}
+
 function AuthorBlock({ article }: { article: Article }) {
   return (
     <Card className="mt-8 p-4">
@@ -67,13 +126,13 @@ function ArticleVideo({ videoUrl }: { videoUrl: string }) {
   );
 }
 
-function LikeBar({ articleId }: { articleId: string }) {
+function LikeBar({ articleId, article }: { articleId: string; article: Article }) {
   const { isLiked, likeCount, toggleLike } = useMadar();
   const [disliked, setDisliked] = useState(false);
   const liked = isLiked(articleId);
 
   return (
-    <div className="mt-6 flex items-center gap-3">
+    <div className="mt-6 flex flex-wrap items-center gap-3">
       <button
         onClick={() => toggleLike(articleId)}
         className={cx(
@@ -105,6 +164,8 @@ function LikeBar({ articleId }: { articleId: string }) {
       >
         <IconThumbDown size={18} />
       </button>
+
+      <ShareButton article={article} />
 
       <span className="mr-auto text-xs text-muted-foreground">
         شاركنا رأيك في المقال
@@ -309,7 +370,7 @@ export function ArticleView({ articleId }: { articleId: string }) {
           {article.videoUrl && <ArticleVideo videoUrl={article.videoUrl} />}
 
           <AuthorBlock article={article} />
-          <LikeBar articleId={articleId} />
+          <LikeBar articleId={articleId} article={article} />
           <CommentSection articleId={articleId} />
         </>
       )}
