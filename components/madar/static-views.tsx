@@ -121,7 +121,7 @@ export function ContactView() {
       <Card className="p-4 text-sm leading-relaxed text-foreground/85">
         <h2 className="mb-2 text-base font-bold text-navy">معلومات التواصل</h2>
         <p dir="ltr" className="text-right">
-          البريد: rdx.prv@gmail.com
+          البريد: madar.text@gmail.com
         </p>
         <p>ساعات العمل: من الأحد إلى الخميس، ٩ صباحًا حتى ٥ مساءً</p>
       </Card>
