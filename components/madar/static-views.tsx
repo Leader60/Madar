@@ -151,7 +151,7 @@ export function ContactView() {
           {"تواصل عبر واتساب"}
         </a>
       </Card>
-
+        <a
       <Card className="p-4 text-sm leading-relaxed text-foreground/85">
         <h2 className="mb-2 text-base font-bold text-navy">معلومات التواصل</h2>
         <p dir="ltr" className="text-right">
