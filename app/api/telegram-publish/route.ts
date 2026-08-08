@@ -28,25 +28,38 @@ export async function POST(request: NextRequest) {
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;
 
-    const captionText = `📰 ${title}\n\n${summary}\n\n🔗 ${articleLink}`;
+    // النص بدون رابط خام - الرابط سيكون فقط داخل الزر
+    const captionText = `📰 ${title}\n\n${summary}`;
+
+    // زر أسفل الرسالة يوجّه لصفحة المقال
+    const replyMarkup = {
+      inline_keyboard: [
+        [
+          {
+            text: '📖 اقرأ المقال كاملاً',
+            url: articleLink,
+          },
+        ],
+      ],
+    };
 
     let telegramUrl: string;
-    let body: Record<string, string>;
+    let body: Record<string, unknown>;
 
     if (imageUrl) {
-      // إرسال مع صورة
       telegramUrl = `https://api.telegram.org/bot${botToken}/sendPhoto`;
       body = {
-        chat_id: chatId as string,
+        chat_id: chatId,
         photo: imageUrl,
         caption: captionText.slice(0, 1024),
+        reply_markup: replyMarkup,
       };
     } else {
-      // إرسال نص فقط
       telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
       body = {
-        chat_id: chatId as string,
+        chat_id: chatId,
         text: captionText.slice(0, 4096),
+        reply_markup: replyMarkup,
       };
     }
 
