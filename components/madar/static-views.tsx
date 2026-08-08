@@ -143,15 +143,15 @@ export function ContactView() {
 
       <Card className="mb-4 p-4">
         
-          href="https://wa.me/965609886551"
+          href="https://wa.me/96560986551"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-3 font-bold text-white transition hover:opacity-90"
         >
-          {"تواصل عبر واتساب"}
+          واتساب
         </a>
       </Card>
-        <a
+
       <Card className="p-4 text-sm leading-relaxed text-foreground/85">
         <h2 className="mb-2 text-base font-bold text-navy">معلومات التواصل</h2>
         <p dir="ltr" className="text-right">
