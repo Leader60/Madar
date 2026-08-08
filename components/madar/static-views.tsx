@@ -142,7 +142,7 @@ export function ContactView() {
       </Card>
 
       <Card className="mb-4 p-4">
-        
+        <a
           href="https://wa.me/96560986551"
           target="_blank"
           rel="noopener noreferrer"
