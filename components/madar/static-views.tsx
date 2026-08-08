@@ -79,7 +79,7 @@ export function ContactView() {
     setSending(true);
 
     try {
-      const response = await fetch("https://formspree.io/f/mzdabogg", {
+      const response = await fetch("https://formspree.io/f/meajezpe", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
