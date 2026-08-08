@@ -63,21 +63,44 @@ export function ContactView() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [sending, setSending] = useState(false);
 
   const valid =
     name.trim().length > 1 &&
     /^\S+@\S+\.\S+$/.test(email.trim()) &&
     message.trim().length > 3;
 
-  const submit = () => {
+  const submit = async () => {
     if (!valid) {
       pushToast("يرجى تعبئة جميع الحقول بشكل صحيح");
       return;
     }
-    setName("");
-    setEmail("");
-    setMessage("");
-    pushToast("تم إرسال رسالتك، شكرًا لتواصلك");
+
+    setSending(true);
+
+    try {
+      const response = await fetch("https://formspree.io/f/mzdabogg", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ name, email, message }),
+      });
+
+      if (response.ok) {
+        setName("");
+        setEmail("");
+        setMessage("");
+        pushToast("تم إرسال رسالتك، شكرًا لتواصلك");
+      } else {
+        pushToast("تعذر إرسال الرسالة، حاول مرة أخرى");
+      }
+    } catch {
+      pushToast("تعذر إرسال الرسالة، تحقق من الاتصال بالإنترنت");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -111,8 +134,8 @@ export function ContactView() {
             maxLength={800}
             className={cx(inputClass, "resize-none")}
           />
-          <Button variant="gold" onClick={submit} disabled={!valid}>
-            إرسال الرسالة
+          <Button variant="gold" onClick={submit} disabled={!valid || sending}>
+            {sending ? "جارٍ الإرسال..." : "إرسال الرسالة"}
             <IconSend size={16} />
           </Button>
         </div>
