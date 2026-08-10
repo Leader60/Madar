@@ -105,7 +105,7 @@ function AuthorBlock({ article }: { article: Article }) {
         </div>
       </div>
       {article.author.bio && (
-        <div className="md-article-body space-y-2 text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap">
+        <div className="md-article-body text-sm leading-relaxed text-foreground/80 [&>p]:mb-2 [&>h3]:mb-1 [&>h3]:mt-3 [&>ul]:mb-2 [&>blockquote]:my-2">
           <ReactMarkdown>{article.author.bio}</ReactMarkdown>
         </div>
       )}
