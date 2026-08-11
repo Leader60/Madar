@@ -20,22 +20,25 @@ type ArticleRow = {
   author_name: string | null;
   author_bio: string | null;
   author_image: string | null;
-  references: ArticleReference[] | null;
+  references: string | null;
 };
 
-function sanitizeReferences(raw: unknown): ArticleReference[] | undefined {
-  if (!Array.isArray(raw)) return undefined;
-  const cleaned = raw
-    .filter(
-      (r): r is { title?: unknown; url?: unknown } =>
-        typeof r === "object" && r !== null,
-    )
-    .map((r) => ({
-      title: typeof r.title === "string" ? r.title.trim() : "",
-      url: typeof r.url === "string" ? r.url.trim() : "",
-    }))
+// يحوّل نص "العنوان | الرابط" (سطر لكل مرجع) إلى مصفوفة ArticleReference.
+// أسطر فارغة أو ناقصة الفاصل | تُتجاهل بصمت.
+function parseReferences(raw: string | null): ArticleReference[] | undefined {
+  if (!raw || !raw.trim()) return undefined;
+  const refs = raw
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const parts = line.split("|");
+      const title = parts[0]?.trim() ?? "";
+      const url = parts[1]?.trim() ?? "";
+      return { title, url };
+    })
     .filter((r) => r.title && r.url);
-  return cleaned.length > 0 ? cleaned : undefined;
+  return refs.length > 0 ? refs : undefined;
 }
 
 function rowToArticle(row: ArticleRow): Article {
@@ -50,7 +53,7 @@ function rowToArticle(row: ArticleRow): Article {
     sideImageHeight: 200,
     imageUrl: row.image_url || undefined,
     videoUrl: row.video_url || undefined,
-    references: sanitizeReferences(row.references),
+    references: parseReferences(row.references),
     body: row.content.split(/\n\s*\n/).filter(Boolean),
     author: {
       name: row.author_name || "فريق مدار",
