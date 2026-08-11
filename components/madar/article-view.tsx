@@ -140,29 +140,26 @@ function ReferencesTable({
       <Card className="overflow-hidden p-0">
         <table className="w-full border-collapse text-sm">
           <tbody>
-            {references.map((ref, i) => (
-              <tr
-                key={`${ref.url}-${i}`}
-                className={cx(
-                  "border-b border-border last:border-b-0",
-                  i % 2 === 1 && "bg-secondary/40",
-                )}
-              >
-                <td className="w-10 px-3 py-2.5 text-center align-top text-xs font-bold text-muted-foreground">
-                  <span className="md-nums">{toArabicNum(i + 1)}</span>
-                </td>
-                <td className="px-3 py-2.5">
-                  
-                    href={ref.url}
-                    target="_blank"
-                    rel="noopener noreferrer nofollow"
-                    className="font-medium text-navy underline decoration-gold/50 underline-offset-2 transition-colors hover:text-gold-deep"
-                  >
-                    {ref.title}
-                  </a>
-                </td>
-              </tr>
-            ))}
+            {references.map((ref, i) => {
+              const rowClass = cx(
+                "border-b border-border last:border-b-0",
+                i % 2 === 1 && "bg-secondary/40",
+              );
+              const linkClass =
+                "font-medium text-navy underline decoration-gold/50 underline-offset-2 transition-colors hover:text-gold-deep";
+              return (
+                <tr key={ref.url + i} className={rowClass}>
+                  <td className="w-10 px-3 py-2.5 text-center align-top text-xs font-bold text-muted-foreground">
+                    <span className="md-nums">{toArabicNum(i + 1)}</span>
+                  </td>
+                  <td className="px-3 py-2.5">
+                    <a href={ref.url} target="_blank" rel="noopener noreferrer nofollow" className={linkClass}>
+                      {ref.title}
+                    </a>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </Card>
