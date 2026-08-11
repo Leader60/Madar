@@ -49,17 +49,17 @@ function ShareButton({ article }: { article: Article }) {
   const { pushToast } = useMadar();
 
   const handleShare = async () => {
-    const url = `${window.location.origin}/article/${encodeURIComponent(article.id)}`;
+    const url = window.location.origin + "/article/" + encodeURIComponent(article.id);
 
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({
           title: article.title,
           text: article.excerpt,
-          url,
+          url: url,
         });
-      } catch {
-        // المستخدم ألغى المشاركة، لا داعي لأي إجراء
+      } catch (err) {
+        // user cancelled share, no action needed
       }
       return;
     }
@@ -67,8 +67,8 @@ function ShareButton({ article }: { article: Article }) {
     try {
       await navigator.clipboard.writeText(url);
       pushToast("تم نسخ رابط المقال");
-    } catch {
-      pushToast("تعذّر نسخ الرابط");
+    } catch (err) {
+      pushToast("تعذر نسخ الرابط");
     }
   };
 
@@ -126,11 +126,25 @@ function ArticleVideo({ videoUrl }: { videoUrl: string }) {
   );
 }
 
-function ReferencesTable({
-  references,
-}: {
-  references: NonNullable<Article["references"]>;
-}) {
+function ReferenceRow({ title, url, index }: { title: string; url: string; index: number }) {
+  const rowClass = cx(
+    "border-b border-border last:border-b-0",
+    index % 2 === 1 ? "bg-secondary/40" : ""
+  );
+  const linkClass = "font-medium text-navy underline decoration-gold/50 underline-offset-2 transition-colors hover:text-gold-deep";
+  return (
+    <tr className={rowClass}>
+      <td className="w-10 px-3 py-2.5 text-center align-top text-xs font-bold text-muted-foreground">
+        <span className="md-nums">{toArabicNum(index + 1)}</span>
+      </td>
+      <td className="px-3 py-2.5">
+        <a href={url} target="_blank" rel="noopener noreferrer nofollow" className={linkClass}>{title}</a>
+      </td>
+    </tr>
+  );
+}
+
+function ReferencesTable({ references }: { references: NonNullable<Article["references"]> }) {
   return (
     <div className="mt-8">
       <div className="mb-3 flex items-center gap-3">
@@ -140,30 +154,8 @@ function ReferencesTable({
       <Card className="overflow-hidden p-0">
         <table className="w-full border-collapse text-sm">
           <tbody>
-            {references.map((ref, i) => {
-              const rowClass = cx(
-                "border-b border-border last:border-b-0",
-                i % 2 === 1 && "bg-secondary/40",
-              );
-              const linkClass =
-                "font-medium text-navy underline decoration-gold/50 underline-offset-2 transition-colors hover:text-gold-deep";
-              return (
-                <tr key={ref.url + i} className={rowClass}>
-                  <td className="w-10 px-3 py-2.5 text-center align-top text-xs font-bold text-muted-foreground">
-                    <span className="md-nums">{toArabicNum(i + 1)}</span>
-                  </td>
-                  <td className="px-3 py-2.5">
-                    
-                      href={ref.url}
-                      target="_blank"
-                      rel="noopener noreferrer nofollow"
-                      className={linkClass}
-                    >
-                      {ref.title}
-                    </a>
-                  </td>
-                </tr>
-              );
+            {references.map(function (ref, i) {
+              return <ReferenceRow key={ref.url + i} title={ref.title} url={ref.url} index={i} />;
             })}
           </tbody>
         </table>
@@ -314,11 +306,7 @@ function CommentSection({ articleId }: { articleId: string }) {
   );
 }
 
-function LockedArticleNotice({
-  onSubscribeClick,
-}: {
-  onSubscribeClick: () => void;
-}) {
+function LockedArticleNotice({ onSubscribeClick }: { onSubscribeClick: () => void }) {
   return (
     <Card className="mt-2 flex flex-col items-center gap-3 p-8 text-center">
       <p className="text-base font-bold text-navy">
