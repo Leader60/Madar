@@ -126,6 +126,50 @@ function ArticleVideo({ videoUrl }: { videoUrl: string }) {
   );
 }
 
+function ReferencesTable({
+  references,
+}: {
+  references: NonNullable<Article["references"]>;
+}) {
+  return (
+    <div className="mt-8">
+      <div className="mb-3 flex items-center gap-3">
+        <span className="h-6 w-1.5 rounded-full bg-gold" />
+        <h2 className="text-lg font-bold text-navy">المراجع والمصادر</h2>
+      </div>
+      <Card className="overflow-hidden p-0">
+        <table className="w-full border-collapse text-sm">
+          <tbody>
+            {references.map((ref, i) => (
+              <tr
+                key={`${ref.url}-${i}`}
+                className={cx(
+                  "border-b border-border last:border-b-0",
+                  i % 2 === 1 && "bg-secondary/40",
+                )}
+              >
+                <td className="w-10 px-3 py-2.5 text-center align-top text-xs font-bold text-muted-foreground">
+                  <span className="md-nums">{toArabicNum(i + 1)}</span>
+                </td>
+                <td className="px-3 py-2.5">
+                  
+                    href={ref.url}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    className="font-medium text-navy underline decoration-gold/50 underline-offset-2 transition-colors hover:text-gold-deep"
+                  >
+                    {ref.title}
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
+    </div>
+  );
+}
+
 function LikeBar({ articleId, article }: { articleId: string; article: Article }) {
   const { isLiked, likeCount, toggleLike } = useMadar();
   const [disliked, setDisliked] = useState(false);
@@ -368,6 +412,10 @@ export function ArticleView({ articleId }: { articleId: string }) {
           </div>
 
           {article.videoUrl && <ArticleVideo videoUrl={article.videoUrl} />}
+
+          {article.references && article.references.length > 0 && (
+            <ReferencesTable references={article.references} />
+          )}
 
           <AuthorBlock article={article} />
           <LikeBar articleId={articleId} article={article} />
