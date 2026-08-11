@@ -17,6 +17,11 @@ export interface AuthorInfo {
   imageUrl?: string;
 }
 
+export interface ArticleReference {
+  title: string;
+  url: string;
+}
+
 export interface Article {
   id: string;
   title: string;
@@ -28,6 +33,7 @@ export interface Article {
   sideImageHeight: number; // px, configurable per article
   imageUrl?: string; // real photo, takes priority over generated art
   videoUrl?: string; // optional video shown at the end of the article, before author block
+  references?: ArticleReference[]; // optional sources/references list shown at the end of the article
   body: string[]; // paragraphs
   author: AuthorInfo;
   baseLikes: number;
