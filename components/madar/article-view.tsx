@@ -153,7 +153,12 @@ function ReferencesTable({
                     <span className="md-nums">{toArabicNum(i + 1)}</span>
                   </td>
                   <td className="px-3 py-2.5">
-                    <a href={ref.url} target="_blank" rel="noopener noreferrer nofollow" className={linkClass}>
+                    
+                      href={ref.url}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      className={linkClass}
+                    >
                       {ref.title}
                     </a>
                   </td>
